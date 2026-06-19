@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/dr-mowinckel-s-design-system-01c7ba7f-cc32-45c2-b3a2-912102152a10/colors_and_type.css">
+<link rel="stylesheet" href="_ds/dr-mowinckel-s-design-system-01c7ba7f-cc32-45c2-b3a2-912102152a10/tailwind.css">
+<script src="_ds/dr-mowinckel-s-design-system-01c7ba7f-cc32-45c2-b3a2-912102152a10/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  .frame { background:#fff; border-radius:3px; box-shadow:0 1px 2px rgba(16,24,28,.06), 0 10px 34px rgba(16,24,28,.07); overflow:hidden; }
+  .flabel { font-family:var(--font-sans); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#6a736f; font-weight:600; margin:0 0 12px 2px; }
+  .seclabel { font-family:var(--font-sans); font-size:13px; letter-spacing:.2em; text-transform:uppercase; color:#88928d; font-weight:700; margin:0 0 20px 2px; display:flex; align-items:center; gap:14px; }
+  .seclabel::after { content:""; flex:1; height:1px; background:linear-gradient(to right,#d3dbd9,transparent); }
+  .btn { font-family:var(--font-sans); font-weight:600; font-size:14px; border:none; cursor:pointer; border-radius:9999px; display:inline-flex; align-items:center; gap:8px; transition:transform .15s var(--ease-out), filter .15s; }
+  .btn:hover { filter:brightness(1.06); }
+  .uirow { font-family:var(--font-sans); }
+  .navlink { font-family:var(--font-sans); font-size:14px; font-weight:500; color:var(--fg-muted); text-decoration:none; }
+  .navlink:hover { color:var(--brand); }
+  .fieldlbl { font-family:var(--font-sans); font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--fg-subtle); display:block; margin-bottom:7px; }
+  .input { font-family:var(--font-sans); font-size:15px; color:var(--fg); background:var(--bg-elev-2); border:1.5px solid var(--border); border-radius:11px; padding:11px 14px; width:100%; box-sizing:border-box; }
+  .input::placeholder { color:var(--fg-subtle); }
+  .chip { font-family:var(--font-sans); font-size:13px; font-weight:600; border-radius:9999px; padding:8px 14px; border:1.5px solid var(--border); color:var(--fg-muted); background:var(--bg-elev-2); cursor:pointer; }
+  .chip.on { background:var(--brand); color:#fff; border-color:var(--brand); }
+  .term { font-family:var(--font-mono); font-size:13.5px; line-height:1.7; }
+  .lightscope {
+    --bg:#ffffff; --bg-elev-1:#f6f8f8; --bg-elev-2:#ffffff; --bg-inset:#eef1f1; --bg-tinted:#eef6f5;
+    --fg:#16201f; --fg-muted:#566461; --fg-subtle:#8b958f;
+    --border:#e4e8e7; --border-subtle:#eef1f0; --border-strong:#0e5857;
+    --brand:#0e5857; --brand-2:#1a7270; --metallic:#0e5857; --botanical:#3f8a6e;
+    --font-display:var(--font-sans); --font-serif:var(--font-sans);
+  }
+  .darkscope {
+    --bg:#0c1a1c; --bg-elev-1:#11262a; --bg-elev-2:#163034; --bg-inset:#081416;
+    --fg:#eef3f2; --fg-muted:#aeb9b6; --fg-subtle:#74827e;
+    --border:#21383a; --border-subtle:#182b2d; --border-strong:#6cc1bf;
+    --brand:#5cc6c2; --brand-2:#9bd6d4; --metallic:#5cc6c2; --botanical:#6fbf9e;
+    --accent:#5cc6c2; --accent-soft:#0c2f2e;
+    --font-display:var(--font-sans); --font-serif:var(--font-sans);
+  }
+</style>
+</helmet>
+
+<div class="lightscope" style="width:max-content; min-width:100%; min-height:100vh; box-sizing:border-box; padding:48px; background:#edefee;">
+
+  <div style="max-width:1640px; margin-bottom:44px;">
+    <div style="font-family:var(--font-sans); font-size:12px; letter-spacing:.24em; text-transform:uppercase; color:#9a9183; font-weight:700;">Modern when2meet alternative</div>
+    <div style="font-family:var(--font-sans); font-weight:800; font-size:48px; letter-spacing:-.03em; color:#2a3231; margin-top:12px;">gather</div>
+    <p style="font-family:var(--font-serif); font-style:italic; font-size:20px; color:#6b6257; max-width:62ch; margin:8px 0 0;">A polished, API-first alternative to when2meet — paint your availability, watch the group heatmap converge, and spin up polls straight from the CLI or a chat / CI command. Hi-fi explorations below; light and dark, desktop and mobile.</p>
+  </div>
+
+  <!-- ============ 00 — NAME ============ -->
+  <div data-screen-label="Name exploration" style="margin-bottom:56px;">
+    <div class="seclabel">00 — Naming the product</div>
+    <div style="display:flex; gap:40px; align-items:flex-start;">
+
+      <div style="flex:none; width:520px;">
+        <div class="flabel">Recommended</div>
+        <div class="frame" style="padding:38px 40px; border:1.5px solid #0e5857;">
+          <div style="font-family:var(--font-sans); font-weight:800; font-size:60px; line-height:1; letter-spacing:-.03em; color:#2a3231;">gather</div>
+          <div style="font-family:var(--font-serif); font-style:italic; font-size:22px; color:#6b6257; margin-top:14px;">"find a time, together."</div>
+          <p style="font-family:var(--font-sans); font-size:14.5px; line-height:1.65; color:#4b524f; margin:18px 0 0; max-width:none;">Says exactly what the tool does — it <strong style="color:#0e5857;">gathers</strong> people and times into one place. Plain, friendly, nothing to explain, and a clean verb for the command line: <code style="font-family:var(--font-mono); font-size:13px;">gather new</code>. Stands on its own as a product name.</p>
+        </div>
+      </div>
+
+      <div style="flex:none; width:560px;">
+        <div class="flabel">Alternates</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+          <div class="frame" style="padding:24px 26px;">
+            <div style="font-family:var(--font-sans); font-weight:800; font-size:34px; color:#2a3231; letter-spacing:-.02em;">align</div>
+            <div style="font-family:var(--font-serif); font-style:italic; font-size:16px; color:#6b6257; margin-top:6px;">line up everyone's calendars</div>
+            <p style="font-family:var(--font-sans); font-size:13px; line-height:1.55; color:#7c7468; margin:10px 0 0;">Crisp and verb-y; reads a little corporate.</p>
+          </div>
+          <div class="frame" style="padding:24px 26px;">
+            <div style="font-family:var(--font-sans); font-weight:800; font-size:34px; color:#2a3231; letter-spacing:-.02em;">when</div>
+            <div style="font-family:var(--font-serif); font-style:italic; font-size:16px; color:#6b6257; margin-top:6px;">the direct heir to when2meet</div>
+            <p style="font-family:var(--font-sans); font-size:13px; line-height:1.55; color:#7c7468; margin:10px 0 0;">Instantly legible; very generic to own.</p>
+          </div>
+          <div class="frame" style="padding:24px 26px;">
+            <div style="font-family:var(--font-sans); font-weight:800; font-size:34px; color:#2a3231; letter-spacing:-.02em;">slate</div>
+            <div style="font-family:var(--font-serif); font-style:italic; font-size:16px; color:#6b6257; margin-top:6px;">put it on the slate</div>
+            <p style="font-family:var(--font-sans); font-size:13px; line-height:1.55; color:#7c7468; margin:10px 0 0;">Warm and calendar-ish; also means "schedule".</p>
+          </div>
+          <div class="frame" style="padding:24px 26px;">
+            <div style="font-family:var(--font-sans); font-weight:800; font-size:34px; color:#2a3231; letter-spacing:-.02em;">rally</div>
+            <div style="font-family:var(--font-serif); font-style:italic; font-size:16px; color:#6b6257; margin-top:6px;">rally everyone to a time</div>
+            <p style="font-family:var(--font-sans); font-size:13px; line-height:1.55; color:#7c7468; margin:10px 0 0;">Energetic; leans event &amp; community.</p>
+          </div>
+        </div>
+        <p style="font-family:var(--font-sans); font-size:13px; line-height:1.6; color:#7c7468; margin:16px 2px 0; max-width:none;">All screens below use <strong style="color:#0e5857;">gather</strong>. Swap the wordmark and the rest holds.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ 01 — LANDING ============ -->
+  <div data-screen-label="Landing page" style="margin-bottom:56px;">
+    <div class="seclabel">01 — Landing page · light & dark</div>
+    <div style="display:flex; gap:40px; align-items:flex-start;">
+
+      <!-- LIGHT LANDING -->
+      <div style="flex:none; width:1180px;">
+        <div class="flabel">Light</div>
+        <div class="frame">
+          <div style="background:var(--bg); color:var(--fg);">
+            <!-- nav -->
+            <div class="uirow" style="display:flex; align-items:center; justify-content:space-between; padding:20px 40px; border-bottom:1px solid var(--border-subtle);">
+              <div style="display:flex; align-items:center; gap:36px;">
+                <div style="font-family:var(--font-sans); font-weight:800; font-size:24px; letter-spacing:-.03em; color:var(--fg);">gather</div>
+                <div style="display:flex; gap:26px;">
+                  <a class="navlink" href="#">How it works</a>
+                  <a class="navlink" href="#">API</a>
+                  <a class="navlink" href="#">Docs</a>
+                  <a class="navlink" href="#">GitHub</a>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:14px;">
+                <div style="width:34px; height:34px; border-radius:9999px; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--fg-muted);">☾</div>
+                <button class="btn" style="background:var(--brand); color:#fff; padding:10px 20px;">New poll</button>
+              </div>
+            </div>
+            <!-- hero -->
+            <div style="display:grid; grid-template-columns:1.05fr .95fr; gap:44px; padding:64px 40px 56px; align-items:center;">
+              <div>
+                <div style="font-family:var(--font-display); font-size:14px; letter-spacing:.22em; text-transform:uppercase; color:var(--metallic); font-weight:500;">Group scheduling, one shared link</div>
+                <h1 style="font-family:var(--font-sans); font-weight:800; font-size:60px; line-height:1.0; letter-spacing:-.035em; text-transform:none; color:var(--fg); margin:18px 0 0;">Find a time,<br>together.</h1>
+                <p style="font-family:var(--font-serif); font-size:21px; line-height:1.5; color:var(--fg-muted); margin:22px 0 0; max-width:46ch;">Paint when you're free, share one link, and watch the group's best slot light up. No accounts required — and every poll is reachable from the API.</p>
+                <div style="display:flex; gap:14px; margin-top:30px;">
+                  <button class="btn" style="background:var(--brand); color:#fff; padding:14px 26px; font-size:15px;">Create a poll →</button>
+                  <button class="btn" style="background:transparent; color:var(--fg); padding:14px 24px; font-size:15px; border:1.5px solid var(--border);">Browse the API</button>
+                </div>
+                <div style="margin-top:26px; background:var(--bg-inset); border:1px solid var(--border-subtle); border-left:3px solid var(--metallic); border-radius:10px; padding:14px 16px; max-width:420px;">
+                  <div class="term" style="color:var(--fg-muted);"><span style="color:var(--metallic);">$</span> gather new <span style="color:var(--brand);">"Team offsite"</span> --days mon-fri --9to17 --tz Europe/Oslo</div>
+                </div>
+              </div>
+              <!-- hero visual: mini heat -->
+              <div style="background:var(--bg-elev-1); border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow-2); padding:24px;">
+                <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;">
+                  <div style="font-family:var(--font-sans); font-weight:700; font-size:14px; color:var(--fg);">Group availability</div>
+                  <div style="font-family:var(--font-sans); font-size:12px; color:var(--fg-subtle);">9 respondents</div>
+                </div>
+                <div style="display:flex; gap:5px;">
+                  <div style="width:40px;"></div>
+                  <sc-for list="{{ days }}" as="d" hint-placeholder-count="5">
+                    <div style="flex:1; text-align:center; font-family:var(--font-sans); font-size:10px; font-weight:700; letter-spacing:.04em; color:var(--fg-subtle);">{{ d.short }}</div>
+                  </sc-for>
+                </div>
+                <sc-for list="{{ heroRows }}" as="row" hint-placeholder-count="9">
+                  <div style="display:flex; gap:5px; margin-top:5px; align-items:center;">
+                    <div style="width:40px; font-family:var(--font-mono); font-size:10px; color:var(--fg-subtle); text-align:right;">{{ row.label }}</div>
+                    <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="5">
+                      <div style="{{ c.style }}"></div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+                <div style="display:flex; align-items:center; gap:8px; margin-top:16px; font-family:var(--font-sans); font-size:11px; color:var(--fg-subtle);">
+                  <span>fewer</span>
+                  <div style="display:flex; gap:3px;">
+                    <div style="width:16px; height:10px; border-radius:2px; background:color-mix(in oklab, var(--brand) 12%, transparent);"></div>
+                    <div style="width:16px; height:10px; border-radius:2px; background:color-mix(in oklab, var(--brand) 38%, transparent);"></div>
+                    <div style="width:16px; height:10px; border-radius:2px; background:color-mix(in oklab, var(--brand) 64%, transparent);"></div>
+                    <div style="width:16px; height:10px; border-radius:2px; background:var(--brand);"></div>
+                  </div>
+                  <span>everyone</span>
+                </div>
+              </div>
+            </div>
+            <!-- features -->
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border-subtle); border-top:1px solid var(--border-subtle);">
+              <div style="background:var(--bg); padding:34px 32px;">
+                <div style="font-family:var(--font-sans); font-weight:800; font-size:13px; letter-spacing:.08em; color:var(--brand);">01</div>
+                <div style="font-family:var(--font-sans); font-weight:700; font-size:17px; color:var(--fg); margin-top:10px;">Paint your hours</div>
+                <p style="font-family:var(--font-serif); font-size:16px; line-height:1.5; color:var(--fg-muted); margin:8px 0 0;">Click-drag across the grid. Timezone-aware, so 14:00 Oslo is 08:00 New York automatically.</p>
+              </div>
+              <div style="background:var(--bg); padding:34px 32px;">
+                <div style="font-family:var(--font-sans); font-weight:800; font-size:13px; letter-spacing:.08em; color:var(--brand);">02</div>
+                <div style="font-family:var(--font-sans); font-weight:700; font-size:17px; color:var(--fg); margin-top:10px;">See it converge</div>
+                <p style="font-family:var(--font-serif); font-size:16px; line-height:1.5; color:var(--fg-muted); margin:8px 0 0;">A live heatmap surfaces the slot that works for the most people, with the runner-ups close behind.</p>
+              </div>
+              <div style="background:var(--bg); padding:34px 32px;">
+                <div style="font-family:var(--font-sans); font-weight:800; font-size:13px; letter-spacing:.08em; color:var(--brand);">03</div>
+                <div style="font-family:var(--font-sans); font-weight:700; font-size:17px; color:var(--fg); margin-top:10px;">Automate it</div>
+                <p style="font-family:var(--font-serif); font-size:16px; line-height:1.5; color:var(--fg-muted); margin:8px 0 0;">A REST API and CLI let any bot — Jinx included — open a poll from a chat or GitHub issue and post results back.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DARK LANDING (hero only) -->
+      <div style="flex:none; width:560px;">
+        <div class="flabel">Dark</div>
+        <div class="frame">
+          <div class="darkscope" style="background:var(--bg); color:var(--fg);">
+            <div class="uirow" style="display:flex; align-items:center; justify-content:space-between; padding:18px 28px; border-bottom:1px solid var(--border-subtle);">
+              <div style="font-family:var(--font-sans); font-weight:800; font-size:22px; letter-spacing:-.03em; color:var(--fg);">gather</div>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:30px; height:30px; border-radius:9999px; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--metallic); font-size:13px;">☀</div>
+                <button class="btn" style="background:var(--brand); color:#06181a; padding:9px 16px; font-size:13px;">New poll</button>
+              </div>
+            </div>
+            <div style="padding:44px 28px 38px;">
+              <div style="font-family:var(--font-display); font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--metallic); font-weight:500;">Group scheduling, one shared link</div>
+              <h1 style="font-family:var(--font-sans); font-weight:800; font-size:44px; line-height:1.02; letter-spacing:-.03em; text-transform:none; color:var(--fg); margin:14px 0 0;">Find a time,<br>together.</h1>
+              <p style="font-family:var(--font-serif); font-size:18px; line-height:1.5; color:var(--fg-muted); margin:18px 0 0; max-width:42ch;">The same calm palette, after dark — the heatmap does the work your eye follows.</p>
+              <div style="display:flex; gap:12px; margin-top:24px;">
+                <button class="btn" style="background:var(--brand); color:#06181a; padding:13px 22px; font-size:14px;">Create a poll →</button>
+                <button class="btn" style="background:transparent; color:var(--fg); padding:13px 20px; font-size:14px; border:1.5px solid var(--border);">Browse the API</button>
+              </div>
+              <div style="margin-top:24px; background:var(--bg-inset); border:1px solid var(--border-subtle); border-left:3px solid var(--metallic); border-radius:10px; padding:13px 15px;">
+                <div class="term" style="color:var(--fg-muted); font-size:12px;"><span style="color:var(--metallic);">$</span> gather new <span style="color:var(--brand);">"meetup"</span> --tz Europe/Oslo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ 02 — CREATE POLL ============ -->
+  <div data-screen-label="Create a poll" style="margin-bottom:56px;">
+    <div class="seclabel">02 — Create a poll</div>
+    <div style="display:flex; gap:40px; align-items:flex-start;">
+
+      <div style="flex:none; width:720px;">
+        <div class="flabel">New event form</div>
+        <div class="frame">
+          <div style="background:var(--bg); color:var(--fg); padding:36px 40px;">
+            <div style="font-family:var(--font-sans); font-weight:800; font-size:20px; letter-spacing:-.03em; color:var(--fg); margin-bottom:6px;">gather</div>
+            <h2 style="font-family:var(--font-sans); font-weight:800; font-size:28px; letter-spacing:-.02em; text-transform:none; color:var(--fg); margin:0 0 4px;">New poll</h2>
+            <p style="font-family:var(--font-sans); font-size:15px; line-height:1.55; color:var(--fg-muted); margin:0 0 28px; max-width:none;">Two minutes. No account needed — you'll get an edit link.</p>
+
+            <div style="margin-bottom:22px;">
+              <label class="fieldlbl">Event name</label>
+              <input class="input" value="Team offsite — September" readonly>
+            </div>
+
+            <div style="margin-bottom:22px;">
+              <label class="fieldlbl">Which days?</label>
+              <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                <span class="chip">Mon 14</span>
+                <span class="chip on">Tue 15</span>
+                <span class="chip on">Wed 16</span>
+                <span class="chip on">Thu 17</span>
+                <span class="chip">Fri 18</span>
+                <span class="chip" style="border-style:dashed; color:var(--brand); border-color:var(--brand);">+ pick on calendar</span>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:22px;">
+              <div>
+                <label class="fieldlbl">No earlier than</label>
+                <input class="input" value="09:00" readonly>
+              </div>
+              <div>
+                <label class="fieldlbl">No later than</label>
+                <input class="input" value="15:00" readonly>
+              </div>
+              <div>
+                <label class="fieldlbl">Slot size</label>
+                <input class="input" value="30 min" readonly>
+              </div>
+            </div>
+
+            <div style="margin-bottom:28px;">
+              <label class="fieldlbl">Timezone</label>
+              <div style="position:relative;">
+                <input class="input" value="Europe/Oslo (CEST · UTC+2)" readonly>
+                <span style="position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--fg-subtle); font-family:var(--font-sans); font-size:12px;">respondents see their own ▾</span>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; padding-top:22px; border-top:1px solid var(--border-subtle);">
+              <label style="display:flex; align-items:center; gap:10px; font-family:var(--font-sans); font-size:14px; color:var(--fg-muted); cursor:pointer;">
+                <span style="width:38px; height:22px; border-radius:9999px; background:var(--brand); position:relative; display:inline-block;"><span style="position:absolute; right:2px; top:2px; width:18px; height:18px; border-radius:50%; background:#fff;"></span></span>
+                Make results public
+              </label>
+              <button class="btn" style="background:var(--brand); color:#fff; padding:14px 30px; font-size:15px;">Create poll</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:none; width:380px;">
+        <div class="flabel">CLI equivalent</div>
+        <div class="frame">
+          <div class="darkscope" style="background:var(--bg-inset); padding:0;">
+            <div style="display:flex; align-items:center; gap:7px; padding:12px 16px; border-bottom:1px solid var(--border-subtle);">
+              <span style="width:11px; height:11px; border-radius:50%; background:#e0827d;"></span>
+              <span style="width:11px; height:11px; border-radius:50%; background:#e3bf95;"></span>
+              <span style="width:11px; height:11px; border-radius:50%; background:#8a9c7e;"></span>
+              <span style="font-family:var(--font-mono); font-size:11px; color:var(--fg-subtle); margin-left:8px;">~/projects</span>
+            </div>
+            <div class="term" style="padding:18px 16px; color:var(--fg-muted);">
+              <div><span style="color:var(--metallic);">$</span> gather new <span style="color:var(--brand-2);">"Team offsite — September"</span> \</div>
+              <div style="padding-left:18px;">--days tue,wed,thu \</div>
+              <div style="padding-left:18px;">--from 09:00 --to 15:00 --slot 30m \</div>
+              <div style="padding-left:18px;">--tz Europe/Oslo --public</div>
+              <div style="height:10px;"></div>
+              <div style="color:var(--botanical);">✓ poll created</div>
+              <div style="color:var(--fg);">  → https://gather.so/<span style="color:var(--brand-2);">e/9fK2qd</span></div>
+              <div style="color:var(--fg-subtle);">  edit token saved to ~/.gather</div>
+            </div>
+          </div>
+        </div>
+        <p style="font-family:var(--font-sans); font-size:13px; line-height:1.6; color:#7c7468; margin:14px 2px 0; max-width:none;">The form and the CLI hit the same endpoint. Anything you can click, a script can do.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ 03 — AVAILABILITY GRID, 3 DIRECTIONS ============ -->
+  <div data-screen-label="Availability grid" style="margin-bottom:56px;">
+    <div class="seclabel">03 — Your availability · three grid directions</div>
+    <div style="display:flex; gap:40px; align-items:flex-start;">
+
+      <!-- A: refined classic -->
+      <div style="flex:none; width:440px;">
+        <div class="flabel">A · Refined classic — solid fills</div>
+        <div class="frame">
+          <div style="background:var(--bg); color:var(--fg); padding:26px 28px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;">
+              <div style="font-family:var(--font-sans); font-weight:700; font-size:16px; color:var(--fg); white-space:nowrap;">Your availability</div>
+              <div style="font-family:var(--font-sans); font-size:12px; color:var(--brand); font-weight:600;">You</div>
+            </div>
+            <div style="font-family:var(--font-sans); font-size:12px; color:var(--fg-subtle); margin-bottom:18px;">Click & drag to paint when you're free · Europe/Oslo</div>
+            <div style="display:flex; gap:4px; margin-bottom:6px;">
+              <div style="width:38px;"></div>
+              <sc-for list="{{ days }}" as="d" hint-placeholder-count="5">
+                <div style="flex:1; text-align:center; font-family:var(--font-sans); font-size:11px; font-weight:700; color:var(--fg-muted);">{{ d.short }}</div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ gridA }}" as="row" hint-placeholder-count="13">
+              <div style="display:flex; gap:4px; align-items:center; margin-bottom:3px;">
+                <div style="width:38px; text-align:right; font-family:var(--font-mono); font-size:10px; color:var(--fg-subtle);">{{ row.label }}</div>
+                <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="5">
+                  <div style="{{ c.style }}"></div>
+                </sc-for>
+              </div>
+            </sc-for>
+            <div style="display:flex; gap:18px; margin-top:16px; font-family:var(--font-sans); font-size:12px; color:var(--fg-subtle);">
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:14px; border-radius:4px; background:var(--brand);"></span> free</span>
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:14px; border-radius:4px; background:var(--bg-inset); border:1px solid var(--border);"></span> busy</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B: soft pill columns, dark -->
+      <div style="flex:none; width:440px;">
+        <div class="flabel">B · Soft columns — rounded, dark mode</div>
+        <div class="frame">
+          <div class="darkscope" style="background:var(--bg); color:var(--fg); padding:26px 28px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;">
+              <div style="font-family:var(--font-sans); font-weight:700; font-size:16px; color:var(--fg); white-space:nowrap;">Your availability</div>
+              <div style="font-family:var(--font-sans); font-size:12px; color:var(--brand); font-weight:600;">You</div>
+            </div>
+            <div style="font-family:var(--font-sans); font-size:12px; color:var(--fg-subtle); margin-bottom:18px;">Drag to fill · rounded runs read as blocks of time</div>
+            <div style="display:flex; gap:6px; margin-bottom:6px;">
+              <div style="width:38px;"></div>
+              <sc-for list="{{ days }}" as="d" hint-placeholder-count="5">
+                <div style="flex:1; text-align:center; font-family:var(--font-sans); font-size:11px; font-weight:700; color:var(--fg-muted);">{{ d.short }}</div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ gridB }}" as="row" hint-placeholder-count="13">
+              <div style="display:flex; gap:6px; align-items:center; margin-bottom:3px;">
+                <div style="width:38px; text-align:right; font-family:var(--font-mono); font-size:10px; color:var(--fg-subtle);">{{ row.label }}</div>
+                <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="5">
+                  <div style="{{ c.style }}"></div>
+                </sc-for>
+              </div>
+            </sc-for>
+            <div style="display:flex; gap:18px; margin-top:16px; font-family:var(--font-sans); font-size:12px; color:var(--fg-subtle);">
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:14px; border-radius:7px; background:var(--brand);"></span> free</span>
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:14px; border-radius:7px; background:var(--bg-elev-1);"></span> busy</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C: dot density -->
+      <div style="flex:none; width:440px;">
+        <div class="flabel">C · Minimal — dot density</div>
+        <div class="frame">
+          <div style="background:var(--bg); color:var(--fg); padding:26px 28px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;">
+              <div style="font-family:var(--font-sans); font-weight:700; font-size:16px; color:var(--fg); white-space:nowrap;">Your availability</div>
+              <div style="font-family:var(--font-sans); font-size:12px; color:var(--brand); font-weight:600;">You</div>
+            </div>
+            <div style="font-family:var(--font-sans); font-size:12px; color:var(--fg-subtle); margin-bottom:18px;">Quiet grid — dots grow where you tap</div>
+            <div style="display:flex; gap:4px; margin-bottom:6px;">
+              <div style="width:38px;"></div>
+              <sc-for list="{{ days }}" as="d" hint-placeholder-count="5">
+                <div style="flex:1; text-align:center; font-family:var(--font-sans); font-size:11px; font-weight:700; color:var(--fg-muted);">{{ d.short }}</div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ gridC }}" as="row" hint-placeholder-count="13">
+              <div style="display:flex; gap:4px; align-items:center; margin-bottom:0;">
+                <div style="width:38px; text-align:right; font-family:var(--font-mono); font-size:10px; color:var(--fg-subtle);">{{ row.label }}</div>
+                <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="5">
+                  <div style="{{ c.style }}"><span style="{{ c.dotStyle }}"></span></div>
+                </sc-for>
+              </div>
+            </sc-for>
+            <div style="display:flex; gap:18px; margin-top:16px; font-family:var(--font-sans); font-size:12px; color:var(--fg-subtle);">
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:13px; height:13px; border-radius:50%; background:var(--brand);"></span> free</span>
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:7px; height:7px; border-radius:50%; background:var(--border);"></span> busy</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile frame -->
+      <div style="flex:none; width:300px;">
+        <div class="flabel">Mobile · paint with thumb</div>
+        <div class="frame" style="border-radius:30px; padding:10px; background:#1a1413;">
+          <div class="darkscope" style="background:var(--bg); color:var(--fg); border-radius:22px; overflow:hidden;">
+            <div style="display:flex; justify-content:center; padding:8px 0 2px;"><div style="width:90px; height:5px; border-radius:9999px; background:rgba(255,255,255,.25);"></div></div>
+            <div style="padding:14px 16px;">
+              <div style="font-family:var(--font-sans); font-weight:800; font-size:16px; letter-spacing:-.03em; color:var(--fg);">gather</div>
+              <div style="font-family:var(--font-sans); font-weight:700; font-size:15px; color:var(--fg); margin-top:10px;">Team offsite</div>
+              <div style="font-family:var(--font-sans); font-size:11px; color:var(--fg-subtle);">tap & swipe to paint</div>
+              <div style="display:flex; gap:4px; margin:14px 0 6px;">
+                <div style="width:30px;"></div>
+                <sc-for list="{{ mDays }}" as="d" hint-placeholder-count="3">
+                  <div style="flex:1; text-align:center; font-family:var(--font-sans); font-size:10px; font-weight:700; color:var(--fg-muted);">{{ d.short }}</div>
+                </sc-for>
+              </div>
+              <sc-for list="{{ gridM }}" as="row" hint-placeholder-count="13">
+                <div style="display:flex; gap:4px; align-items:center; margin-bottom:4px;">
+                  <div style="width:30px; text-align:right; font-family:var(--font-mono); font-size:9px; color:var(--fg-subtle);">{{ row.label }}</div>
+                  <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="3">
+                    <div style="{{ c.style }}"></div>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex; gap:10px; padding:12px 16px 18px; border-top:1px solid var(--border-subtle);">
+              <button class="btn" style="flex:1; justify-content:center; background:var(--bg-elev-1); color:var(--fg); padding:11px;">Share</button>
+              <button class="btn" style="flex:1; justify-content:center; background:var(--brand); color:#06181a; padding:11px;">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ 04 — GROUP RESULTS / HEATMAP ============ -->
+  <div data-screen-label="Group results" style="margin-bottom:56px;">
+    <div class="seclabel">04 — Group results · the heatmap</div>
+    <div style="display:flex; gap:40px; align-items:flex-start;">
+
+      <div style="flex:none; width:860px;">
+        <div class="flabel">Light · best slot highlighted</div>
+        <div class="frame">
+          <div style="background:var(--bg); color:var(--fg); padding:32px 36px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:22px;">
+              <div>
+                <div style="font-family:var(--font-sans); font-weight:800; font-size:18px; letter-spacing:-.03em; color:var(--fg); margin-bottom:6px;">gather</div>
+                <h2 style="font-family:var(--font-sans); font-weight:800; font-size:24px; letter-spacing:-.02em; text-transform:none; color:var(--fg); margin:0;">Team offsite — Sept</h2>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-family:var(--font-sans); font-size:12px; color:var(--fg-subtle);">9 of 11 responded</div>
+                <div style="display:flex; gap:-6px; margin-top:8px; justify-content:flex-end;">
+                  <sc-for list="{{ avatars }}" as="a" hint-placeholder-count="6">
+                    <div style="{{ a.style }}">{{ a.initial }}</div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 230px; gap:28px; align-items:start;">
+              <!-- heatmap -->
+              <div>
+                <div style="display:flex; gap:5px; margin-bottom:6px;">
+                  <div style="width:44px;"></div>
+                  <sc-for list="{{ days }}" as="d" hint-placeholder-count="5">
+                    <div style="flex:1; text-align:center; font-family:var(--font-sans); font-size:12px; font-weight:700; color:var(--fg-muted);">{{ d.full }}</div>
+                  </sc-for>
+                </div>
+                <sc-for list="{{ heat }}" as="row" hint-placeholder-count="13">
+                  <div style="display:flex; gap:5px; align-items:center; margin-bottom:4px;">
+                    <div style="width:44px; text-align:right; font-family:var(--font-mono); font-size:10px; color:var(--fg-subtle);">{{ row.label }}</div>
+                    <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="5">
+                      <div style="{{ c.style }}">{{ c.num }}</div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </div>
+              <!-- side panel -->
+              <div>
+                <div style="background:var(--brand); color:#fff; border-radius:14px; padding:18px 20px;">
+                  <div style="font-family:var(--font-sans); font-size:11px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; opacity:.85;">Best slot</div>
+                  <div style="font-family:var(--font-sans); font-weight:800; font-size:24px; letter-spacing:-.02em; line-height:1.1; margin-top:6px;">Wed 16, 12:00</div>
+                  <div style="font-family:var(--font-sans); font-size:13px; margin-top:8px; opacity:.9;">9 / 9 available · all in</div>
+                </div>
+                <div style="margin-top:18px;">
+                  <div style="font-family:var(--font-sans); font-size:11px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--fg-subtle); margin-bottom:10px;">Runner-ups</div>
+                  <div style="font-family:var(--font-sans); font-size:14px; color:var(--fg); display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; justify-content:space-between;"><span>Wed 16, 11:30</span><span style="color:var(--fg-subtle);">8/9</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Thu 17, 13:00</span><span style="color:var(--fg-subtle);">8/9</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Tue 15, 12:30</span><span style="color:var(--fg-subtle);">7/9</span></div>
+                  </div>
+                </div>
+                <div style="margin-top:18px; padding-top:16px; border-top:1px solid var(--border-subtle);">
+                  <div style="font-family:var(--font-sans); font-size:12px; color:var(--fg-subtle); margin-bottom:6px;">Hover a cell →</div>
+                  <div style="background:var(--bg-elev-2); border:1px solid var(--border); border-radius:10px; padding:12px; box-shadow:var(--shadow-2);">
+                    <div style="font-family:var(--font-sans); font-weight:700; font-size:13px; color:var(--fg);">Wed 16, 12:00</div>
+                    <div style="font-family:var(--font-sans); font-size:12px; color:var(--botanical); margin-top:4px;">Available · 9</div>
+                    <div style="font-family:var(--font-sans); font-size:12px; color:var(--fg-muted); margin-top:6px; line-height:1.5;">Sam, Júlia, Anh, Priya, Sara, Lena, Ada, Kari, Tove</div>
+                  </div>
+                </div>
+                <button class="btn" style="width:100%; justify-content:center; background:var(--brand); color:#fff; padding:13px; margin-top:18px; font-size:14px;">Lock in Wed 12:00</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:none; width:560px;">
+        <div class="flabel">Dark · the heat glows</div>
+        <div class="frame">
+          <div class="darkscope" style="background:var(--bg); color:var(--fg); padding:32px 36px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:22px;">
+              <div>
+                <div style="font-family:var(--font-sans); font-weight:800; font-size:16px; letter-spacing:-.03em; color:var(--fg); margin-bottom:4px;">gather</div>
+                <h2 style="font-family:var(--font-sans); font-weight:800; font-size:21px; letter-spacing:-.02em; text-transform:none; color:var(--fg); margin:0;">Team offsite</h2>
+              </div>
+              <div style="font-family:var(--font-sans); font-size:12px; color:var(--fg-subtle);">9 of 11 responded</div>
+            </div>
+            <div style="display:flex; gap:5px; margin-bottom:6px;">
+              <div style="width:44px;"></div>
+              <sc-for list="{{ days }}" as="d" hint-placeholder-count="5">
+                <div style="flex:1; text-align:center; font-family:var(--font-sans); font-size:11px; font-weight:700; color:var(--fg-muted);">{{ d.short }}</div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ heatDark }}" as="row" hint-placeholder-count="13">
+              <div style="display:flex; gap:5px; align-items:center; margin-bottom:4px;">
+                <div style="width:44px; text-align:right; font-family:var(--font-mono); font-size:10px; color:var(--fg-subtle);">{{ row.label }}</div>
+                <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="5">
+                  <div style="{{ c.style }}">{{ c.num }}</div>
+                </sc-for>
+              </div>
+            </sc-for>
+            <div style="display:flex; align-items:center; gap:10px; margin-top:18px; font-family:var(--font-sans); font-size:12px; color:var(--fg-subtle);">
+              <span>0</span>
+              <div style="flex:1; height:10px; border-radius:9999px; background:linear-gradient(to right, color-mix(in oklab, var(--brand) 10%, transparent), var(--brand));"></div>
+              <span>9</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ 05 — API + CLI / JINX ============ -->
+  <div data-screen-label="API and CLI" style="margin-bottom:24px;">
+    <div class="seclabel">05 — API & CLI · bot integration (Jinx-ready)</div>
+    <div style="display:flex; gap:40px; align-items:flex-start;">
+
+      <!-- docs page -->
+      <div style="flex:none; width:760px;">
+        <div class="flabel">API reference</div>
+        <div class="frame">
+          <div style="background:var(--bg); color:var(--fg); padding:34px 38px;">
+            <div style="font-family:var(--font-display); font-size:13px; letter-spacing:.2em; text-transform:uppercase; color:var(--metallic); font-weight:500;">Reference</div>
+            <h2 style="font-family:var(--font-sans); font-weight:800; font-size:28px; letter-spacing:-.02em; text-transform:none; color:var(--fg); margin:10px 0 6px;">One poll, two front doors</h2>
+            <p style="font-family:var(--font-serif); font-size:17px; line-height:1.5; color:var(--fg-muted); margin:0 0 26px; max-width:60ch;">Everything the web UI does is a thin client over this REST API. Authenticate with a bot token; create, read, and resolve polls.</p>
+
+            <table style="margin-bottom:26px;">
+              <thead><tr>
+                <th style="width:90px;">Method</th><th>Endpoint</th><th>Does</th>
+              </tr></thead>
+              <tbody style="font-family:var(--font-mono);">
+                <tr><td><span style="color:var(--botanical); font-weight:700;">POST</span></td><td>/v1/polls</td><td style="font-family:var(--font-sans);">Create a poll</td></tr>
+                <tr><td><span style="color:var(--signal-info); font-weight:700;">GET</span></td><td>/v1/polls/:id</td><td style="font-family:var(--font-sans);">Fetch poll + grid state</td></tr>
+                <tr><td><span style="color:var(--botanical); font-weight:700;">POST</span></td><td>/v1/polls/:id/slots</td><td style="font-family:var(--font-sans);">Submit availability</td></tr>
+                <tr><td><span style="color:var(--signal-info); font-weight:700;">GET</span></td><td>/v1/polls/:id/best</td><td style="font-family:var(--font-sans);">Top slots, ranked</td></tr>
+              </tbody>
+            </table>
+
+            <div style="font-family:var(--font-sans); font-weight:700; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-subtle); margin-bottom:10px;">Create a poll</div>
+            <div class="darkscope" style="background:var(--bg-inset); border-radius:12px; overflow:hidden;">
+              <div class="term" style="padding:18px 20px; color:var(--fg-muted);">
+                <div><span style="color:var(--metallic);">$</span> curl -X POST https://gather.so/v1/polls \</div>
+                <div style="padding-left:16px;">-H <span style="color:var(--brand-2);">"Authorization: Bearer $BOT_TOKEN"</span> \</div>
+                <div style="padding-left:16px;">-d <span style="color:var(--brand-2);">'{</span></div>
+                <div style="padding-left:32px; color:var(--brand-2);">"title": "Team offsite",</div>
+                <div style="padding-left:32px; color:var(--brand-2);">"days": ["2025-07-15","2025-07-16","2025-07-17"],</div>
+                <div style="padding-left:32px; color:var(--brand-2);">"from": "09:00", "to": "15:00", "slot": 30,</div>
+                <div style="padding-left:32px; color:var(--brand-2);">"tz": "Europe/Oslo"</div>
+                <div style="padding-left:16px; color:var(--brand-2);">}'</div>
+                <div style="height:10px;"></div>
+                <div style="color:var(--fg-subtle);">{ <span style="color:var(--fg);">"id"</span>: <span style="color:var(--botanical);">"9fK2qd"</span>, <span style="color:var(--fg);">"url"</span>: <span style="color:var(--botanical);">"https://gather.so/e/9fK2qd"</span> }</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- jinx on github -->
+      <div style="flex:none; width:560px;">
+        <div class="flabel">A bot on a GitHub issue</div>
+        <div class="frame">
+          <div style="background:var(--bg); color:var(--fg); padding:0;">
+            <div style="display:flex; align-items:center; gap:10px; padding:16px 22px; border-bottom:1px solid var(--border-subtle); background:var(--bg-elev-1);">
+              <span style="width:10px; height:10px; border-radius:50%; background:var(--botanical);"></span>
+              <span style="font-family:var(--font-sans); font-weight:700; font-size:14px; color:var(--fg);">Schedule the September offsite</span>
+              <span style="font-family:var(--font-sans); font-size:11px; color:var(--fg-subtle); margin-left:auto;">#312 · open</span>
+            </div>
+            <!-- user comment -->
+            <div style="padding:18px 22px; display:flex; gap:12px; border-bottom:1px solid var(--border-subtle);">
+              <div style="width:34px; height:34px; border-radius:50%; background:var(--brand); flex:none; display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-sans); font-weight:700; font-size:13px;">A</div>
+              <div style="flex:1;">
+                <div style="font-family:var(--font-sans); font-size:13px; color:var(--fg-subtle); margin-bottom:8px;"><strong style="color:var(--fg);">alex</strong> · just now</div>
+                <div style="font-family:var(--font-mono); font-size:13px; background:var(--bg-inset); border:1px solid var(--border-subtle); border-radius:8px; padding:10px 12px; color:var(--fg);">/jinx gather tue-thu 9-15 tz:Europe/Oslo</div>
+              </div>
+            </div>
+            <!-- jinx reply -->
+            <div style="padding:18px 22px; display:flex; gap:12px;">
+              <div style="width:34px; height:34px; border-radius:9px; background:linear-gradient(135deg, var(--metallic), var(--brand)); flex:none; display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-wordmark); font-size:15px;">J</div>
+              <div style="flex:1;">
+                <div style="font-family:var(--font-sans); font-size:13px; color:var(--fg-subtle); margin-bottom:10px;"><strong style="color:var(--fg);">jinx-bot</strong> <span style="background:var(--accent-soft); color:var(--accent); font-size:10px; font-weight:700; padding:2px 7px; border-radius:9999px; letter-spacing:.04em;">BOT</span> · now</div>
+                <div style="background:var(--bg-elev-1); border:1px solid var(--border); border-radius:12px; padding:16px;">
+                  <div style="font-family:var(--font-sans); font-size:14px; color:var(--fg); line-height:1.55;">📋 Poll's up! <strong>Team offsite — September</strong></div>
+                  <div style="font-family:var(--font-sans); font-size:13px; color:var(--fg-muted); margin:6px 0 12px;">Tue–Thu · 09:00–15:00 · Europe/Oslo</div>
+                  <a href="#" style="font-family:var(--font-mono); font-size:13px; color:var(--brand); text-decoration:none; font-weight:600;">→ gather.so/e/9fK2qd</a>
+                  <div style="display:flex; gap:8px; margin-top:14px;">
+                    <span style="font-family:var(--font-sans); font-size:12px; font-weight:600; color:var(--fg-muted); background:var(--bg-inset); border:1px solid var(--border-subtle); border-radius:9999px; padding:6px 12px;">0 responses</span>
+                    <span style="font-family:var(--font-sans); font-size:12px; font-weight:600; color:var(--fg-muted); background:var(--bg-inset); border:1px solid var(--border-subtle); border-radius:9999px; padding:6px 12px;">closes in 5 days</span>
+                  </div>
+                </div>
+                <div style="font-family:var(--font-sans); font-size:12px; color:var(--fg-subtle); margin-top:10px; line-height:1.5;">I'll edit this comment with the winning slot once everyone's in.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p style="font-family:var(--font-sans); font-size:13px; line-height:1.6; color:#7c7468; margin:14px 2px 0; max-width:none;">The exact command grammar (<code style="font-family:var(--font-mono); font-size:12px;">/jinx gather …</code>) is a placeholder — easy to tune to how your bot already parses issues.</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1700,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  // ---- deterministic mock data ----
+  fmt(idx) {
+    // idx 0..12 maps to 09:00..15:00 half-hour, label only on the hour
+    const h = 9 + Math.floor(idx / 2);
+    const m = idx % 2 ? 30 : 0;
+    if (m !== 0) return '';
+    return (h === 12 ? '12pm' : h > 12 ? (h - 12) + 'pm' : h + 'am');
+  }
+  youAvail(d, t) {
+    return (d <= 1 && t >= 4 && t <= 9) ||
+           (d === 2 && t >= 5 && t <= 11) ||
+           (d === 3 && t >= 7 && t <= 11) ||
+           (d === 4 && t >= 3 && t <= 6);
+  }
+  count(d, t) {
+    const pd = 2, pt = 6; // peak Wed ~12:00
+    let c = 9 - Math.abs(d - pd) * 1.6 - Math.abs(t - pt) * 0.8;
+    c += ((d * 7 + t * 5) % 3) - 1;
+    return Math.max(0, Math.min(9, Math.round(c)));
+  }
+
+  makeBinary(styler, dayCount) {
+    const rows = [];
+    const ndays = dayCount || 5;
+    for (let t = 0; t < 13; t++) {
+      const cells = [];
+      for (let d = 0; d < ndays; d++) cells.push(styler(d, t, this.youAvail(d, t)));
+      rows.push({ label: this.fmt(t), cells });
+    }
+    return rows;
+  }
+
+  makeHeat(dark) {
+    const rows = [];
+    let max = -1, maxD = 0, maxT = 0;
+    for (let d = 0; d < 5; d++) for (let t = 0; t < 13; t++) {
+      const c = this.count(d, t);
+      if (c > max) { max = c; maxD = d; maxT = t; }
+    }
+    for (let t = 0; t < 13; t++) {
+      const cells = [];
+      for (let d = 0; d < 5; d++) {
+        const c = this.count(d, t);
+        const pct = Math.round((c / 9) * 100);
+        const best = (d === maxD && t === maxT);
+        const numColor = c >= 5 ? (dark ? '#10171a' : '#fff') : (c >= 1 ? 'var(--fg-subtle)' : 'transparent');
+        let style = `flex:1; height:22px; border-radius:5px; display:flex; align-items:center; justify-content:center;` +
+          `font-family:var(--font-sans); font-size:10px; font-weight:700; color:${numColor};` +
+          `background:color-mix(in oklab, var(--brand) ${pct}%, ${dark ? 'var(--bg-inset)' : 'transparent'});`;
+        if (c === 0) style += `box-shadow:inset 0 0 0 1px var(--border-subtle);`;
+        if (best) style += `box-shadow:0 0 0 2px var(--metallic), 0 0 14px color-mix(in oklab, var(--brand) 60%, transparent);`;
+        cells.push({ style, num: c >= 1 ? String(c) : '' });
+      }
+      rows.push({ label: this.fmt(t), cells });
+    }
+    return rows;
+  }
+
+  renderVals() {
+    const days = [
+      { short: 'MON', full: 'Mon 14' },
+      { short: 'TUE', full: 'Tue 15' },
+      { short: 'WED', full: 'Wed 16' },
+      { short: 'THU', full: 'Thu 17' },
+      { short: 'FRI', full: 'Fri 18' },
+    ];
+
+    // Direction A — refined classic, solid fills, square-ish
+    const stylerA = (d, t, on) => ({
+      style: `flex:1; height:22px; border-radius:4px;` +
+        (on ? `background:var(--brand);`
+            : `background:var(--bg-inset); box-shadow:inset 0 0 0 1px var(--border-subtle);`)
+    });
+    // Direction B — soft rounded columns (dark)
+    const stylerB = (d, t, on) => ({
+      style: `flex:1; height:24px; border-radius:8px;` +
+        (on ? `background:linear-gradient(180deg, var(--brand), color-mix(in oklab, var(--brand) 78%, #000));`
+            : `background:var(--bg-elev-1);`)
+    });
+    // Direction C — dot density
+    const stylerC = (d, t, on) => ({
+      style: `flex:1; height:24px; display:flex; align-items:center; justify-content:center; border-bottom:1px solid var(--border-subtle);`,
+      dotStyle: on
+        ? `width:14px; height:14px; border-radius:50%; background:var(--brand); display:inline-block;`
+        : `width:6px; height:6px; border-radius:50%; background:var(--border); display:inline-block;`
+    });
+    // Mobile — direction A, 3 days, narrower
+    const stylerM = (d, t, on) => ({
+      style: `flex:1; height:20px; border-radius:4px;` +
+        (on ? `background:var(--brand);`
+            : `background:var(--bg-inset); box-shadow:inset 0 0 0 1px var(--border-subtle);`)
+    });
+
+    // hero mini heat — 5 days, 9 rows compressed
+    const heroRows = [];
+    for (let t = 0; t < 9; t++) {
+      const cells = [];
+      for (let d = 0; d < 5; d++) {
+        const c = this.count(d, Math.round(t * 1.4) + 2);
+        const pct = Math.round((c / 9) * 100);
+        cells.push({ style: `flex:1; height:13px; border-radius:3px; background:color-mix(in oklab, var(--brand) ${pct}%, transparent);` + (c === 0 ? `box-shadow:inset 0 0 0 1px var(--border-subtle);` : '') });
+      }
+      heroRows.push({ label: this.fmt(Math.round(t * 1.4) + 2), cells });
+    }
+
+    const avatars = ['M', 'J', 'A', 'P', 'S', '+4'].map((initial, i) => ({
+      initial,
+      style: `width:28px; height:28px; border-radius:50%; margin-left:-6px; border:2px solid var(--bg);` +
+        `display:flex; align-items:center; justify-content:center; font-family:var(--font-sans); font-size:11px; font-weight:700;` +
+        (i === 5
+          ? `background:var(--bg-inset); color:var(--fg-muted);`
+          : `background:color-mix(in oklab, var(--brand) ${60 + i * 8}%, var(--metallic)); color:#fff;`)
+    }));
+
+    const darkVars =
+      '--bg:#0a1f24; --bg-elev-1:#0e2a2c; --bg-elev-2:#103436; --bg-inset:#061619;' +
+      '--fg:#f5efe6; --fg-muted:#c9d4d1; --fg-subtle:#84968f;' +
+      '--border:#1c3f3e; --border-subtle:#143030; --border-strong:#d4a574;' +
+      '--brand:#b07fc2; --brand-2:#d0a8da; --metallic:#d4a574; --botanical:#7aa498;' +
+      '--accent:#6cc1bf; --accent-soft:#0c3a39;';
+
+    return {
+      days,
+      mDays: days.slice(0, 3),
+      gridA: this.makeBinary(stylerA, 5),
+      gridB: this.makeBinary(stylerB, 5),
+      gridC: this.makeBinary(stylerC, 5),
+      gridM: this.makeBinary(stylerM, 3),
+      heat: this.makeHeat(false),
+      heatDark: this.makeHeat(true),
+      heroRows,
+      avatars,
+      darkVars,
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+name = "gather-api"
+main = "src/index.ts"
+compatibility_date = "2025-02-04"
+
+# Production config (this file = the deployed state). For local `wrangler dev`,
+# values are overridden by `.dev.vars`; tests override them in vitest.config.ts.
+# ALLOWED_ORIGINS is a comma-separated allowlist for CORS.
+[vars]
+ALLOWED_ORIGINS = "https://drmowinckels.github.io"
+WEB_BASE_URL = "https://drmowinckels.github.io/gather"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "gather"
+database_id = "REPLACE_WITH_D1_ID"
+migrations_dir = "migrations"

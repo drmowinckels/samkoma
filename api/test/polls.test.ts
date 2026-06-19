@@ -1,0 +1,81 @@
+import { SELF } from "cloudflare:test";
+import { describe, it, expect } from "vitest";
+
+const ORIGIN = "http://localhost:5173";
+
+const validPoll = {
+  title: "Team offsite",
+  days: ["2026-07-15", "2026-07-16", "2026-07-17"],
+  from: "09:00",
+  to: "15:00",
+  slot: 30,
+  tz: "Europe/Oslo",
+  public: true,
+};
+
+function post(body: unknown) {
+  return SELF.fetch("https://api.test/v1/polls", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Origin: ORIGIN },
+    body: JSON.stringify(body),
+  });
+}
+
+describe("POST /v1/polls", () => {
+  it("creates a poll and returns id, url and editToken", async () => {
+    const res = await post(validPoll);
+    expect(res.status).toBe(201);
+    const json = (await res.json()) as {
+      id: string;
+      url: string;
+      editToken: string;
+    };
+    expect(json.id).toMatch(/^[0-9A-Za-z]{6}$/);
+    expect(json.editToken).toHaveLength(48);
+    expect(json.url).toContain(`/#/e/${json.id}`);
+  });
+
+  it("rejects a malformed body with 400", async () => {
+    const res = await post({ ...validPoll, from: "9am", days: [] });
+    expect(res.status).toBe(400);
+    const json = (await res.json()) as { error: string };
+    expect(json.error).toBe("invalid_body");
+  });
+
+  it("rejects an invalid timezone", async () => {
+    const res = await post({ ...validPoll, tz: "Mars/Olympus" });
+    expect(res.status).toBe(400);
+  });
+
+  it("sets CORS headers for the allowed origin", async () => {
+    const res = await post(validPoll);
+    expect(res.headers.get("access-control-allow-origin")).toBe(ORIGIN);
+  });
+});
+
+describe("GET /v1/polls/:id", () => {
+  it("returns a previously created poll without the edit token", async () => {
+    const created = (await (await post(validPoll)).json()) as { id: string };
+
+    const res = await SELF.fetch(`https://api.test/v1/polls/${created.id}`, {
+      headers: { Origin: ORIGIN },
+    });
+    expect(res.status).toBe(200);
+    const poll = (await res.json()) as Record<string, unknown>;
+    expect(poll.id).toBe(created.id);
+    expect(poll.title).toBe(validPoll.title);
+    expect(poll.days).toEqual(validPoll.days);
+    expect(poll.from).toBe("09:00");
+    expect(poll.public).toBe(true);
+    expect(poll.responses).toEqual([]);
+    expect(poll.editToken).toBeUndefined();
+    expect(poll.edit_token).toBeUndefined();
+  });
+
+  it("returns 404 for an unknown poll", async () => {
+    const res = await SELF.fetch("https://api.test/v1/polls/nope00", {
+      headers: { Origin: ORIGIN },
+    });
+    expect(res.status).toBe(404);
+  });
+});
