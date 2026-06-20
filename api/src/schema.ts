@@ -47,3 +47,9 @@ export const submitSlotsSchema = z.object({
 });
 
 export type SubmitSlotsInput = z.infer<typeof submitSlotsSchema>;
+
+export const lockSchema = z.object({
+  slot: z.string().regex(SLOT_KEY).nullable(),
+});
+
+export type LockInput = z.infer<typeof lockSchema>;

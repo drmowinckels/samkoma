@@ -145,6 +145,60 @@ describe("GET /v1/polls/:id/best", () => {
   });
 });
 
+describe("POST /v1/polls/:id/lock", () => {
+  function lock(id: string, slot: string | null, token?: string) {
+    return SELF.fetch(`https://api.test/v1/polls/${id}/lock`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: ORIGIN,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ slot }),
+    });
+  }
+
+  it("lets the host lock and unlock a slot", async () => {
+    const created = (await (await post(validPoll)).json()) as {
+      id: string;
+      editToken: string;
+    };
+    const slot = "2026-07-15T09:00";
+
+    const res = await lock(created.id, slot, created.editToken);
+    expect(res.status).toBe(200);
+    expect(((await res.json()) as { lockedSlot: string }).lockedSlot).toBe(slot);
+
+    const fetched = (await (
+      await SELF.fetch(`https://api.test/v1/polls/${created.id}`, {
+        headers: { Origin: ORIGIN },
+      })
+    ).json()) as { lockedSlot: string | null };
+    expect(fetched.lockedSlot).toBe(slot);
+
+    const unlocked = (await (
+      await lock(created.id, null, created.editToken)
+    ).json()) as { lockedSlot: string | null };
+    expect(unlocked.lockedSlot).toBeNull();
+  });
+
+  it("forbids non-hosts (missing or wrong token)", async () => {
+    const created = (await (await post(validPoll)).json()) as { id: string };
+    expect((await lock(created.id, "2026-07-15T09:00")).status).toBe(403);
+    expect((await lock(created.id, "2026-07-15T09:00", "nope")).status).toBe(403);
+  });
+
+  it("rejects a slot outside the poll grid", async () => {
+    const created = (await (await post(validPoll)).json()) as {
+      id: string;
+      editToken: string;
+    };
+    expect((await lock(created.id, "2026-07-15T20:00", created.editToken)).status).toBe(
+      400,
+    );
+  });
+});
+
 describe("private poll results gating", () => {
   const privatePoll = { ...validPoll, public: false };
 

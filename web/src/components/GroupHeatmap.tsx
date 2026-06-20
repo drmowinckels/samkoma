@@ -1,19 +1,40 @@
-import { useMemo } from "react";
-import type { Poll } from "../lib/api";
+import { useMemo, useState } from "react";
+import { lockSlot, type Poll } from "../lib/api";
 import { aggregate } from "../lib/heatmap";
 import { hourLabel, dayHeader } from "../lib/datetime";
 import { buildGridView, formatSlotLabelInTz } from "../lib/tz";
 
 const BEST_SHADOW =
   "0 0 0 2px var(--brand), 0 0 14px color-mix(in oklab, var(--brand) 60%, transparent)";
+const LOCK_SHADOW = "0 0 0 2px var(--border-strong)";
 
 export function GroupHeatmap({
   poll,
   viewerTz,
+  isHost = false,
+  editToken,
+  onLockChange,
 }: {
   poll: Poll;
   viewerTz: string;
+  isHost?: boolean;
+  editToken?: string | null;
+  onLockChange?: (poll: Poll) => void;
 }) {
+  const [locking, setLocking] = useState(false);
+
+  async function setLock(slot: string | null) {
+    if (!editToken) return;
+    setLocking(true);
+    try {
+      onLockChange?.(await lockSlot(poll.id, slot, editToken));
+    } catch {
+      // surfaced minimally; lock is a host convenience
+    } finally {
+      setLocking(false);
+    }
+  }
+
   const view = useMemo(
     () =>
       buildGridView(poll.days, poll.from, poll.to, poll.slot, poll.tz, viewerTz),
@@ -110,6 +131,7 @@ export function GroupHeatmap({
                 const count = cell?.count ?? 0;
                 const pct = Math.round((count / agg.total) * 100);
                 const isBest = key === agg.bestKey;
+                const isLocked = key === poll.lockedSlot;
                 return (
                   <div
                     key={d}
@@ -124,8 +146,9 @@ export function GroupHeatmap({
                         count === 0
                           ? "transparent"
                           : `color-mix(in oklab, var(--brand) ${pct}%, var(--heat-base))`,
-                      boxShadow:
-                        count === 0
+                      boxShadow: isLocked
+                        ? LOCK_SHADOW
+                        : count === 0
                           ? "inset 0 0 0 1px var(--border-subtle)"
                           : isBest
                             ? BEST_SHADOW
@@ -232,6 +255,42 @@ export function GroupHeatmap({
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {isHost && editToken && (
+            <div
+              style={{
+                marginTop: 18,
+                paddingTop: 16,
+                borderTop: "1px solid var(--border-subtle)",
+              }}
+            >
+              {poll.lockedSlot ? (
+                <>
+                  <div style={{ fontSize: 13, marginBottom: 8 }}>
+                    📌 Locked: <strong>{label(poll.lockedSlot)}</strong>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    onClick={() => setLock(null)}
+                    disabled={locking}
+                  >
+                    {locking ? "…" : "Unlock"}
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{ width: "100%" }}
+                  onClick={() => setLock(best.slot)}
+                  disabled={locking}
+                >
+                  {locking ? "Locking…" : `Lock in ${label(best.slot)}`}
+                </button>
+              )}
             </div>
           )}
         </div>

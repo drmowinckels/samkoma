@@ -11,6 +11,7 @@ import {
   browserTimezone,
   listTimezones,
 } from "../lib/datetime";
+import { formatSlotLabelInTz } from "../lib/tz";
 
 type State =
   | { kind: "loading" }
@@ -172,6 +173,24 @@ export function PollPage() {
           )}
         </label>
 
+        {poll.lockedSlot && (
+          <div
+            className="card"
+            style={{
+              padding: "16px 20px",
+              marginTop: 18,
+              background: "var(--bg-tinted)",
+              borderLeft: "3px solid var(--brand)",
+              fontSize: 15,
+            }}
+          >
+            📌 Locked in:{" "}
+            <strong>
+              {formatSlotLabelInTz(poll.lockedSlot, poll.tz, viewerTz)}
+            </strong>
+          </div>
+        )}
+
         <div className="card" style={{ padding: 22, margin: "26px 0" }}>
           <span className="fieldlbl">Share this link</span>
           <div className="copy-row">
@@ -194,7 +213,15 @@ export function PollPage() {
         <RespondPanel poll={poll} viewerTz={viewerTz} onSaved={mergeResponse} />
 
         {poll.public || isHost ? (
-          <GroupHeatmap poll={poll} viewerTz={viewerTz} />
+          <GroupHeatmap
+            poll={poll}
+            viewerTz={viewerTz}
+            isHost={isHost}
+            editToken={getEditToken(poll.id)}
+            onLockChange={(updated) =>
+              setState({ kind: "ready", poll: updated })
+            }
+          />
         ) : (
           <div
             className="card"

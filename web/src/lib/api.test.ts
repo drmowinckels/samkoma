@@ -3,6 +3,7 @@ import {
   createPoll,
   getPoll,
   submitSlots,
+  lockSlot,
   ApiError,
   type PollInput,
 } from "./api";
@@ -113,5 +114,23 @@ describe("submitSlots", () => {
     await expect(
       submitSlots("abc123", { name: "Ada", tz: "UTC", slots: ["x"] }),
     ).rejects.toMatchObject({ code: "invalid_slots", status: 400 });
+  });
+});
+
+describe("lockSlot", () => {
+  it("POSTs the slot with the edit token as a Bearer header", async () => {
+    const fn = mockFetch({ id: "abc123", lockedSlot: "2026-07-15T09:00" });
+    const poll = await lockSlot("abc123", "2026-07-15T09:00", "tok");
+    expect(poll.lockedSlot).toBe("2026-07-15T09:00");
+    const [url, opts] = fn.mock.calls[0];
+    expect(url).toBe("http://localhost:8787/v1/polls/abc123/lock");
+    expect(opts.headers.Authorization).toBe("Bearer tok");
+    expect(JSON.parse(opts.body)).toEqual({ slot: "2026-07-15T09:00" });
+  });
+
+  it("sends slot null to unlock", async () => {
+    const fn = mockFetch({ id: "abc123", lockedSlot: null });
+    await lockSlot("abc123", null, "tok");
+    expect(JSON.parse(fn.mock.calls[0][1].body)).toEqual({ slot: null });
   });
 });

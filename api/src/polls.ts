@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import type { Context } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { createPollSchema, submitSlotsSchema } from "./schema";
+import { createPollSchema, submitSlotsSchema, lockSchema } from "./schema";
 import { shortId, editToken } from "./id";
 import { validSlotKeys } from "./slots";
 import { rankSlots } from "./aggregate";
@@ -42,6 +42,7 @@ interface PollRow {
   is_public: number;
   edit_token: string;
   created_at: string;
+  locked_slot: string | null;
 }
 
 interface ResponseRow {
@@ -61,6 +62,7 @@ function serializePoll(row: PollRow, responses: ResponseRow[]) {
     slot: row.slot_minutes,
     tz: row.tz,
     public: row.is_public === 1,
+    lockedSlot: row.locked_slot ?? null,
     createdAt: row.created_at,
     responses: responses.map((r) => ({
       name: r.name,
@@ -156,6 +158,47 @@ polls.get("/:id/best", async (c) => {
 
   return c.json(rankSlots(responses, limit));
 });
+
+polls.post(
+  "/:id/lock",
+  zValidator("json", lockSchema, (result, c) => {
+    if (!result.success) return badRequest(c, result.error.issues);
+  }),
+  async (c) => {
+    const id = c.req.param("id");
+    const row = await c.env.DB.prepare(`SELECT * FROM polls WHERE id = ?`)
+      .bind(id)
+      .first<PollRow>();
+    if (!row) return c.json({ error: "not_found" }, 404);
+
+    const token = bearerToken(c);
+    if (!token || !constantTimeEqual(token, row.edit_token)) {
+      return c.json({ error: "forbidden" }, 403);
+    }
+
+    const { slot } = c.req.valid("json");
+    if (slot !== null) {
+      const valid = validSlotKeys(
+        JSON.parse(row.days) as string[],
+        row.from_time,
+        row.to_time,
+        row.slot_minutes,
+      );
+      if (!valid.has(slot)) return c.json({ error: "invalid_slots" }, 400);
+    }
+
+    await c.env.DB.prepare(`UPDATE polls SET locked_slot = ? WHERE id = ?`)
+      .bind(slot, id)
+      .run();
+
+    const responses = await c.env.DB.prepare(
+      `SELECT name, tz, slots, updated_at FROM responses WHERE poll_id = ? ORDER BY id`,
+    )
+      .bind(id)
+      .all<ResponseRow>();
+    return c.json(serializePoll({ ...row, locked_slot: slot }, responses.results));
+  },
+);
 
 polls.post(
   "/:id/slots",

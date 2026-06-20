@@ -33,6 +33,7 @@ export interface Poll {
   slot: number;
   tz: string;
   public: boolean;
+  lockedSlot: string | null;
   createdAt: string;
   responses: PollResponse[];
 }
@@ -97,4 +98,24 @@ export async function submitSlots(
   );
   if (!res.ok) throw await toError(res);
   return (await res.json()) as PollResponse;
+}
+
+export async function lockSlot(
+  id: string,
+  slot: string | null,
+  editToken: string,
+): Promise<Poll> {
+  const res = await fetch(
+    `${API_BASE}/v1/polls/${encodeURIComponent(id)}/lock`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${editToken}`,
+      },
+      body: JSON.stringify({ slot }),
+    },
+  );
+  if (!res.ok) throw await toError(res);
+  return (await res.json()) as Poll;
 }

@@ -55,8 +55,11 @@ canonical (in the poll's home tz), so two people in different zones who pick the
 same absolute time land on the same slot. So "14:00 Oslo" is "08:00 New York"
 automatically.
 
-**Next slices:** "lock in" the winning slot; then the CLI and the Jinx
-GitHub-bot integration.
+**Slice 5 (done):** the host can "lock in" the winning slot
+(`POST /v1/polls/:id/lock`, edit-token gated). Everyone sees a "Locked in" banner
+and the locked cell is ringed; the host can unlock.
+
+**Next slices:** the CLI and the Jinx GitHub-bot integration.
 
 ## API
 
@@ -69,6 +72,7 @@ the full contract and visual spec.
 | `GET`  | `/v1/polls/:id`       | —                                             | poll + aggregated responses            |
 | `POST` | `/v1/polls/:id/slots` | `{name, tz, slots[]}`                         | saved `{name, tz, slots, …}`           |
 | `GET`  | `/v1/polls/:id/best`  | `?limit=` (optional)                          | `{total, results[{slot,count,names}]}` |
+| `POST` | `/v1/polls/:id/lock`  | `{slot}` (or `{slot:null}`), host token       | updated poll                           |
 
 Slot keys are `YYYY-MM-DDThh:mm` in the poll's canonical timezone. For a
 non-public poll, `GET /v1/polls/:id` returns an empty `responses` list and
