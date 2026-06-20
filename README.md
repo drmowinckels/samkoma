@@ -29,8 +29,8 @@ browser ──fetch──▶  gather-api.<sub>.workers.dev  ──▶  D1 (SQLit
 
 ## Live
 
-- **App:** https://drmowinckels.io/gather/
-- **API:** https://gather-api.drmowinckels.workers.dev
+- **App:** https://gather.drmowinckels.io
+- **API:** https://api.gather.drmowinckels.io (also https://gather-api.drmowinckels.workers.dev)
 
 ## Status
 
@@ -70,7 +70,7 @@ npm run dev                  # wrangler dev on http://localhost:8787
 cd web
 npm install
 cp .env.example .env         # VITE_API_BASE=http://localhost:8787
-npm run dev                  # vite on http://localhost:5173/gather/
+npm run dev                  # vite on http://localhost:5173/
 ```
 
 ### Test
@@ -102,9 +102,10 @@ The repo deploys on push to `main` via [`.github/workflows/deploy.yml`].
    GitHub Actions **variable** `VITE_API_BASE` = that URL and re-run the workflow
    so the web build points at the live API.
 
-> The frontend is served from `/gather/` (project Pages site). If you move it to
-> a custom domain at the root, set `base` in `web/vite.config.ts` and
-> `WEB_BASE_URL` in `api/wrangler.toml` accordingly.
+> The frontend is served at the root of the custom domain `gather.drmowinckels.io`
+> (Vite `base` is `/`). The API has a Cloudflare Worker custom domain
+> `api.gather.drmowinckels.io`. `ALLOWED_ORIGINS` / `WEB_BASE_URL` in
+> `api/wrangler.toml` and the `VITE_API_BASE` repo variable all point at these.
 
 ## Notes
 

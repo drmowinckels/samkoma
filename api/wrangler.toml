@@ -6,8 +6,8 @@ compatibility_date = "2025-02-04"
 # values are overridden by `.dev.vars`; tests override them in vitest.config.ts.
 # ALLOWED_ORIGINS is a comma-separated allowlist for CORS.
 [vars]
-ALLOWED_ORIGINS = "https://drmowinckels.io,https://drmowinckels.github.io"
-WEB_BASE_URL = "https://drmowinckels.io/gather"
+ALLOWED_ORIGINS = "https://gather.drmowinckels.io"
+WEB_BASE_URL = "https://gather.drmowinckels.io"
 
 [[d1_databases]]
 binding = "DB"
