@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AvailabilityGrid } from "./AvailabilityGrid";
-import { submitSlots, ApiError, type Poll } from "../lib/api";
+import { submitSlots, ApiError, type Poll, type PollResponse } from "../lib/api";
 import { browserTimezone, timeSlots, tzOffsetLabel } from "../lib/datetime";
 import { getName, saveName, getOwnSlots, saveOwnSlots } from "../lib/storage";
 
@@ -10,7 +10,13 @@ type SaveState =
   | { kind: "saved" }
   | { kind: "error"; message: string };
 
-export function RespondPanel({ poll }: { poll: Poll }) {
+export function RespondPanel({
+  poll,
+  onSaved,
+}: {
+  poll: Poll;
+  onSaved?: (response: PollResponse) => void;
+}) {
   const times = useMemo(
     () => timeSlots(poll.from, poll.to, poll.slot),
     [poll.from, poll.to, poll.slot],
@@ -44,12 +50,13 @@ export function RespondPanel({ poll }: { poll: Poll }) {
     setSave({ kind: "saving" });
     try {
       const painted = [...slotsRef.current];
-      await submitSlots(poll.id, {
+      const saved = await submitSlots(poll.id, {
         name: trimmed,
         tz: browserTimezone(),
         slots: painted,
       });
       saveOwnSlots(poll.id, painted);
+      onSaved?.(saved);
       setSave({ kind: "saved" });
     } catch (err) {
       setSave({

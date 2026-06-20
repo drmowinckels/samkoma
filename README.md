@@ -44,21 +44,30 @@ page with a shareable link.
 columns) on the poll page, saved via `POST /v1/polls/:id/slots` (upsert by name,
 autosave on drag-end, keyboard toggle for a11y).
 
-**Next slices:** the group heatmap + `GET /best`; per-viewer timezone
-conversion; then the CLI and the Jinx GitHub-bot integration.
+**Slice 3 (done):** group heatmap on the poll page + `GET /v1/polls/:id/best`.
+Cells coloured by how many respondents are free, best slot ringed, best-slot +
+runner-ups panel. Results respect the privacy flag (public, or host with the
+edit token).
+
+**Next slices:** per-viewer timezone conversion; "lock in" the winning slot;
+then the CLI and the Jinx GitHub-bot integration.
 
 ## API
 
 Base: the deployed Worker URL. See [`design/HANDOFF.md`](design/HANDOFF.md) for
 the full contract and visual spec.
 
-| Method | Endpoint              | Body                                          | Returns                      |
-| ------ | --------------------- | --------------------------------------------- | ---------------------------- |
-| `POST` | `/v1/polls`           | `{title, days[], from, to, slot, tz, public}` | `{id, url, editToken}`       |
-| `GET`  | `/v1/polls/:id`       | —                                             | poll + aggregated responses  |
-| `POST` | `/v1/polls/:id/slots` | `{name, tz, slots[]}`                         | saved `{name, tz, slots, …}` |
+| Method | Endpoint              | Body                                          | Returns                                |
+| ------ | --------------------- | --------------------------------------------- | -------------------------------------- |
+| `POST` | `/v1/polls`           | `{title, days[], from, to, slot, tz, public}` | `{id, url, editToken}`                 |
+| `GET`  | `/v1/polls/:id`       | —                                             | poll + aggregated responses            |
+| `POST` | `/v1/polls/:id/slots` | `{name, tz, slots[]}`                         | saved `{name, tz, slots, …}`           |
+| `GET`  | `/v1/polls/:id/best`  | `?limit=` (optional)                          | `{total, results[{slot,count,names}]}` |
 
-Slot keys are `YYYY-MM-DDThh:mm` in the poll's canonical timezone. `GET /v1/polls/:id/best` lands in the next slice.
+Slot keys are `YYYY-MM-DDThh:mm` in the poll's canonical timezone. For a
+non-public poll, `GET /v1/polls/:id` returns an empty `responses` list and
+`GET /v1/polls/:id/best` returns `403` unless the request sends the edit token
+as `Authorization: Bearer <token>`.
 
 ## Develop
 

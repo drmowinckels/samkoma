@@ -80,6 +80,71 @@ describe("GET /v1/polls/:id", () => {
   });
 });
 
+describe("GET /v1/polls/:id/best", () => {
+  function submit(id: string, name: string, slots: string[]) {
+    return SELF.fetch(`https://api.test/v1/polls/${id}/slots`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Origin: ORIGIN },
+      body: JSON.stringify({ name, tz: "Europe/Oslo", slots }),
+    });
+  }
+
+  it("returns ranked slots with counts and names (public poll)", async () => {
+    const { id } = (await (await post(validPoll)).json()) as { id: string };
+    await submit(id, "Ada", ["2026-07-15T09:00", "2026-07-15T09:30"]);
+    await submit(id, "Kari", ["2026-07-15T09:00"]);
+
+    const res = await SELF.fetch(`https://api.test/v1/polls/${id}/best`, {
+      headers: { Origin: ORIGIN },
+    });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as {
+      total: number;
+      results: Array<{ slot: string; count: number; names: string[] }>;
+    };
+    expect(body.total).toBe(2);
+    expect(body.results[0]).toEqual({
+      slot: "2026-07-15T09:00",
+      count: 2,
+      names: ["Ada", "Kari"],
+    });
+    expect(body.results).toHaveLength(2);
+  });
+
+  it("honors ?limit=", async () => {
+    const { id } = (await (await post(validPoll)).json()) as { id: string };
+    await submit(id, "Ada", ["2026-07-15T09:00", "2026-07-15T09:30"]);
+    const res = await SELF.fetch(`https://api.test/v1/polls/${id}/best?limit=1`, {
+      headers: { Origin: ORIGIN },
+    });
+    expect(((await res.json()) as { results: unknown[] }).results).toHaveLength(1);
+  });
+
+  it("forbids results on a private poll without the edit token", async () => {
+    const created = (await (
+      await post({ ...validPoll, public: false })
+    ).json()) as { id: string; editToken: string };
+    await submit(created.id, "Ada", ["2026-07-15T09:00"]);
+
+    const anon = await SELF.fetch(`https://api.test/v1/polls/${created.id}/best`, {
+      headers: { Origin: ORIGIN },
+    });
+    expect(anon.status).toBe(403);
+
+    const host = await SELF.fetch(`https://api.test/v1/polls/${created.id}/best`, {
+      headers: { Origin: ORIGIN, Authorization: `Bearer ${created.editToken}` },
+    });
+    expect(host.status).toBe(200);
+  });
+
+  it("404s for an unknown poll", async () => {
+    const res = await SELF.fetch("https://api.test/v1/polls/nope00/best", {
+      headers: { Origin: ORIGIN },
+    });
+    expect(res.status).toBe(404);
+  });
+});
+
 describe("private poll results gating", () => {
   const privatePoll = { ...validPoll, public: false };
 

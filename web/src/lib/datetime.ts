@@ -113,6 +113,13 @@ export function dayHeader(iso: string): { weekday: string; day: string } {
   return { weekday: WEEKDAY_FMT.format(d), day: DAY_FMT.format(d) };
 }
 
+// "2026-07-16T12:00" -> "Wed 16, 12:00"
+export function formatSlotLabel(key: string): string {
+  const [day, time] = key.split("T");
+  const h = dayHeader(day);
+  return `${h.weekday} ${h.day}, ${time}`;
+}
+
 export function formatDayRange(days: string[]): string {
   if (days.length === 0) return "No days yet";
   const sorted = [...days].sort();

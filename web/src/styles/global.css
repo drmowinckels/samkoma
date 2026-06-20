@@ -373,6 +373,30 @@ a:hover {
   }
 }
 
+.heatcell {
+  flex: 1;
+  min-width: 40px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  gap: 28px;
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .copy-row {
   display: flex;
   gap: 8px;

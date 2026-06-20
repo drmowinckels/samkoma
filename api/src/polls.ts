@@ -4,6 +4,7 @@ import { zValidator } from "@hono/zod-validator";
 import { createPollSchema, submitSlotsSchema } from "./schema";
 import { shortId, editToken } from "./id";
 import { validSlotKeys } from "./slots";
+import { rankSlots } from "./aggregate";
 import type { Env } from "./types";
 
 function badRequest(c: Context, issues: unknown) {
@@ -20,6 +21,14 @@ function constantTimeEqual(a: string, b: string): boolean {
   let diff = 0;
   for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return diff === 0;
+}
+
+// Aggregated results are visible when the poll is public, or to the host
+// (proves ownership via the edit token in an Authorization: Bearer header).
+function canSeeResults(c: Context, row: PollRow): boolean {
+  if (row.is_public === 1) return true;
+  const token = bearerToken(c);
+  return token !== null && constantTimeEqual(token, row.edit_token);
 }
 
 interface PollRow {
@@ -108,14 +117,8 @@ polls.get("/:id", async (c) => {
     .first<PollRow>();
   if (!row) return c.json({ error: "not_found" }, 404);
 
-  // Responses are visible when the poll is public, or to the host (edit token).
-  const token = bearerToken(c);
-  const canSeeResponses =
-    row.is_public === 1 ||
-    (token !== null && constantTimeEqual(token, row.edit_token));
-
   let responses: ResponseRow[] = [];
-  if (canSeeResponses) {
+  if (canSeeResults(c, row)) {
     const result = await c.env.DB.prepare(
       `SELECT name, tz, slots, updated_at FROM responses WHERE poll_id = ? ORDER BY id`,
     )
@@ -125,6 +128,33 @@ polls.get("/:id", async (c) => {
   }
 
   return c.json(serializePoll(row, responses));
+});
+
+polls.get("/:id/best", async (c) => {
+  const id = c.req.param("id");
+  const row = await c.env.DB.prepare(`SELECT * FROM polls WHERE id = ?`)
+    .bind(id)
+    .first<PollRow>();
+  if (!row) return c.json({ error: "not_found" }, 404);
+  if (!canSeeResults(c, row)) return c.json({ error: "forbidden" }, 403);
+
+  const limitRaw = c.req.query("limit");
+  const parsed = limitRaw ? Number.parseInt(limitRaw, 10) : NaN;
+  const limit = Number.isFinite(parsed)
+    ? Math.max(1, Math.min(1000, parsed))
+    : undefined;
+
+  const result = await c.env.DB.prepare(
+    `SELECT name, slots FROM responses WHERE poll_id = ?`,
+  )
+    .bind(id)
+    .all<{ name: string; slots: string }>();
+  const responses = result.results.map((r) => ({
+    name: r.name,
+    slots: JSON.parse(r.slots) as string[],
+  }));
+
+  return c.json(rankSlots(responses, limit));
 });
 
 polls.post(

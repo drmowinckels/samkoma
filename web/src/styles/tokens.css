@@ -14,6 +14,7 @@
   --brand-2: #1a7270;
   --botanical: #3f8a6e;
   --on-brand: #ffffff;
+  --heat-base: transparent;
 
   --shadow:
     0 1px 2px rgba(16, 24, 28, 0.06), 0 10px 34px rgba(16, 24, 28, 0.07);
@@ -43,6 +44,7 @@
   --brand-2: #9bd6d4;
   --botanical: #6fbf9e;
   --on-brand: #06181a;
+  --heat-base: var(--bg-inset);
 
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 36px rgba(0, 0, 0, 0.36);
 }

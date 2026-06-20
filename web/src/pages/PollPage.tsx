@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Shell } from "../components/Shell";
 import { RespondPanel } from "../components/RespondPanel";
-import { getPoll, ApiError, type Poll } from "../lib/api";
+import { GroupHeatmap } from "../components/GroupHeatmap";
+import { getPoll, ApiError, type Poll, type PollResponse } from "../lib/api";
 import { getEditToken } from "../lib/storage";
 import { formatDayRange, tzOffsetLabel } from "../lib/datetime";
 
@@ -34,6 +35,14 @@ export function PollPage() {
       active = false;
     };
   }, [id]);
+
+  function mergeResponse(r: PollResponse) {
+    setState((s) => {
+      if (s.kind !== "ready") return s;
+      const others = s.poll.responses.filter((x) => x.name !== r.name);
+      return { kind: "ready", poll: { ...s.poll, responses: [...others, r] } };
+    });
+  }
 
   async function copyLink() {
     try {
@@ -135,7 +144,23 @@ export function PollPage() {
           </p>
         </div>
 
-        <RespondPanel poll={poll} />
+        <RespondPanel poll={poll} onSaved={mergeResponse} />
+
+        {poll.public || isHost ? (
+          <GroupHeatmap poll={poll} />
+        ) : (
+          <div
+            className="card"
+            style={{ padding: "28px", textAlign: "center", margin: "26px 0" }}
+          >
+            <p style={{ fontWeight: 700, fontSize: 15, margin: 0 }}>
+              Results are private
+            </p>
+            <p className="helper" style={{ margin: "8px auto 0", maxWidth: 360 }}>
+              The host kept the group results private. Your availability is saved.
+            </p>
+          </div>
+        )}
       </div>
     </Shell>
   );

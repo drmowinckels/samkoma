@@ -1,0 +1,235 @@
+import { useMemo } from "react";
+import type { Poll } from "../lib/api";
+import { aggregate } from "../lib/heatmap";
+import {
+  timeSlots,
+  slotKey,
+  hourLabel,
+  dayHeader,
+  formatSlotLabel,
+} from "../lib/datetime";
+
+const BEST_SHADOW =
+  "0 0 0 2px var(--brand), 0 0 14px color-mix(in oklab, var(--brand) 60%, transparent)";
+
+export function GroupHeatmap({ poll }: { poll: Poll }) {
+  const times = useMemo(
+    () => timeSlots(poll.from, poll.to, poll.slot),
+    [poll.from, poll.to, poll.slot],
+  );
+  const headers = useMemo(() => poll.days.map((d) => dayHeader(d)), [poll.days]);
+  const agg = useMemo(() => aggregate(poll.responses), [poll.responses]);
+
+  if (agg.total === 0) {
+    return (
+      <div
+        className="card"
+        style={{ padding: "36px 28px", textAlign: "center", margin: "26px 0" }}
+      >
+        <p style={{ fontWeight: 700, fontSize: 16, margin: 0 }}>
+          No availability yet
+        </p>
+        <p className="helper" style={{ margin: "8px auto 0", maxWidth: 360 }}>
+          Once people paint their free times, the group's best slot lights up
+          here.
+        </p>
+      </div>
+    );
+  }
+
+  const best = agg.ranked[0];
+  const runnerUps = agg.ranked.slice(1, 5);
+
+  return (
+    <div className="card" style={{ padding: 24, margin: "26px 0" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "baseline",
+          gap: 12,
+          marginBottom: 18,
+          flexWrap: "wrap",
+        }}
+      >
+        <h2 style={{ fontWeight: 700, fontSize: 18, margin: 0 }}>
+          Group availability
+        </h2>
+        <span className="subtle" style={{ fontSize: 12 }}>
+          {agg.total} {agg.total === 1 ? "response" : "responses"}
+        </span>
+      </div>
+
+      <div className="results-grid">
+        <div>
+          <div style={{ display: "flex", gap: 5, marginBottom: 5 }}>
+            <div style={{ width: 46, flex: "none" }} />
+            {poll.days.map((d, i) => (
+              <div
+                key={d}
+                style={{
+                  flex: 1,
+                  minWidth: 40,
+                  textAlign: "center",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: "var(--fg-muted)",
+                }}
+              >
+                {headers[i].weekday} {headers[i].day}
+              </div>
+            ))}
+          </div>
+
+          {times.map((t) => (
+            <div
+              key={t}
+              style={{ display: "flex", gap: 5, marginBottom: 5, alignItems: "center" }}
+            >
+              <div
+                style={{
+                  width: 46,
+                  flex: "none",
+                  textAlign: "right",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 11,
+                  color: "var(--fg-subtle)",
+                }}
+              >
+                {hourLabel(t)}
+              </div>
+              {poll.days.map((d) => {
+                const key = slotKey(d, t);
+                const cell = agg.cells.get(key);
+                const count = cell?.count ?? 0;
+                const pct = Math.round((count / agg.total) * 100);
+                const isBest = key === agg.bestKey;
+                return (
+                  <div
+                    key={key}
+                    className="heatcell"
+                    title={
+                      count > 0
+                        ? `${formatSlotLabel(key)} — ${count}/${agg.total} free: ${cell!.names.join(", ")}`
+                        : `${formatSlotLabel(key)} — nobody yet`
+                    }
+                    style={{
+                      background:
+                        count === 0
+                          ? "transparent"
+                          : `color-mix(in oklab, var(--brand) ${pct}%, var(--heat-base))`,
+                      boxShadow:
+                        count === 0
+                          ? "inset 0 0 0 1px var(--border-subtle)"
+                          : isBest
+                            ? BEST_SHADOW
+                            : "none",
+                      color: pct >= 55 ? "var(--on-brand)" : "var(--fg-subtle)",
+                    }}
+                  >
+                    {count > 0 ? count : ""}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              marginTop: 16,
+              fontSize: 12,
+              color: "var(--fg-subtle)",
+            }}
+          >
+            <span>0</span>
+            <div
+              style={{
+                flex: 1,
+                height: 10,
+                borderRadius: 9999,
+                background:
+                  "linear-gradient(to right, color-mix(in oklab, var(--brand) 10%, var(--heat-base)), var(--brand))",
+              }}
+            />
+            <span>{agg.total}</span>
+          </div>
+        </div>
+
+        <div>
+          <div
+            style={{
+              background: "var(--brand)",
+              color: "var(--on-brand)",
+              borderRadius: 14,
+              padding: "18px 20px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 11,
+                letterSpacing: ".16em",
+                textTransform: "uppercase",
+                fontWeight: 700,
+                opacity: 0.85,
+              }}
+            >
+              Best slot
+            </div>
+            <div
+              style={{
+                fontWeight: 800,
+                fontSize: 22,
+                letterSpacing: "-0.02em",
+                lineHeight: 1.1,
+                marginTop: 6,
+              }}
+            >
+              {formatSlotLabel(best.slot)}
+            </div>
+            <div style={{ fontSize: 13, marginTop: 8, opacity: 0.9 }}>
+              {best.count} / {agg.total} available
+              {best.count === agg.total ? " · all in" : ""}
+            </div>
+          </div>
+
+          {runnerUps.length > 0 && (
+            <div style={{ marginTop: 18 }}>
+              <div
+                style={{
+                  fontSize: 11,
+                  letterSpacing: ".16em",
+                  textTransform: "uppercase",
+                  fontWeight: 700,
+                  color: "var(--fg-subtle)",
+                  marginBottom: 10,
+                }}
+              >
+                Runner-ups
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {runnerUps.map((r) => (
+                  <div
+                    key={r.slot}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      fontSize: 14,
+                    }}
+                  >
+                    <span>{formatSlotLabel(r.slot)}</span>
+                    <span className="subtle">
+                      {r.count}/{agg.total}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
