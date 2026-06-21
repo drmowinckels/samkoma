@@ -8,6 +8,8 @@ compatibility_date = "2025-02-04"
 [vars]
 ALLOWED_ORIGINS = "https://gather.drmowinckels.io"
 WEB_BASE_URL = "https://gather.drmowinckels.io"
+CREATE_LIMIT = "30"      # max poll creations per IP per minute
+MAX_RESPONSES = "1000"   # max distinct respondents per poll
 
 [[d1_databases]]
 binding = "DB"

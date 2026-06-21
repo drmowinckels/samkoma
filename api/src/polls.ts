@@ -6,6 +6,7 @@ import { shortId, editToken } from "./id";
 import { validSlotKeys } from "./slots";
 import { rankSlots } from "./aggregate";
 import { expiryDate, isExpired, todayUTC } from "./dates";
+import { rateLimit } from "./ratelimit";
 import type { Env } from "./types";
 
 const GRACE_DAYS = 14;
@@ -86,6 +87,12 @@ polls.post(
     if (!result.success) return badRequest(c, result.error.issues);
   }),
   async (c) => {
+    const ip = c.req.header("CF-Connecting-IP") ?? "anon";
+    const limit = Number.parseInt(c.env.CREATE_LIMIT, 10) || 30;
+    if (!(await rateLimit(c.env.DB, `create:${ip}`, limit, 60))) {
+      return c.json({ error: "rate_limited" }, 429);
+    }
+
     const body = c.req.valid("json");
     const id = shortId();
     const token = editToken();
@@ -238,6 +245,18 @@ polls.post(
     const invalid = slots.filter((s) => !valid.has(s));
     if (invalid.length > 0) {
       return c.json({ error: "invalid_slots", invalid: invalid.slice(0, 10) }, 400);
+    }
+
+    // Cap distinct respondents per poll (existing names just upsert).
+    const cap = Number.parseInt(c.env.MAX_RESPONSES, 10) || 1000;
+    const counts = await c.env.DB.prepare(
+      `SELECT COUNT(*) AS c, COALESCE(SUM(CASE WHEN name = ? THEN 1 ELSE 0 END), 0) AS mine
+         FROM responses WHERE poll_id = ?`,
+    )
+      .bind(body.name, id)
+      .first<{ c: number; mine: number }>();
+    if (counts && counts.c >= cap && counts.mine === 0) {
+      return c.json({ error: "poll_full" }, 429);
     }
 
     const now = new Date().toISOString();

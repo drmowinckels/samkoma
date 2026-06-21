@@ -51,6 +51,12 @@ describe("POST /v1/polls", () => {
     const res = await post(validPoll);
     expect(res.headers.get("access-control-allow-origin")).toBe(ORIGIN);
   });
+
+  it("rate-limits creation beyond CREATE_LIMIT (10 in tests)", async () => {
+    let status = 0;
+    for (let i = 0; i <= 10; i++) status = (await post(validPoll)).status; // 11 requests
+    expect(status).toBe(429);
+  });
 });
 
 describe("GET /v1/polls/:id", () => {
@@ -319,5 +325,16 @@ describe("POST /v1/polls/:id/slots", () => {
       slots: [],
     });
     expect(res.status).toBe(404);
+  });
+
+  it("caps distinct respondents at MAX_RESPONSES (3 in tests)", async () => {
+    const { id } = await newPoll();
+    let status = 0;
+    for (const name of ["A", "B", "C", "D"]) {
+      status = (
+        await submit(id, { name, tz: "Europe/Oslo", slots: ["2099-07-15T09:00"] })
+      ).status;
+    }
+    expect(status).toBe(429); // 4th distinct respondent rejected
   });
 });

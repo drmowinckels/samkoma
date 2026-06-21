@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { polls } from "./polls";
 import { deleteExpired } from "./cleanup";
+import { purgeRateLimits } from "./ratelimit";
 import { todayUTC } from "./dates";
 import type { Env } from "./types";
 
@@ -37,6 +38,7 @@ export default {
   // Daily cron: purge polls that expired (last day + grace period).
   async scheduled(_event: ScheduledController, env: Env, _ctx: ExecutionContext) {
     const removed = await deleteExpired(env.DB, todayUTC());
+    await purgeRateLimits(env.DB, 60);
     console.log(`gather cron: removed ${removed} expired poll(s)`);
   },
 } satisfies ExportedHandler<Env>;
