@@ -22,6 +22,7 @@ export function GroupHeatmap({
   onLockChange?: (poll: Poll) => void;
 }) {
   const [locking, setLocking] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
 
   async function setLock(slot: string | null) {
     if (!editToken) return;
@@ -87,7 +88,7 @@ export function GroupHeatmap({
       </div>
 
       <div className="results-grid">
-        <div>
+        <div onMouseLeave={() => setHovered(null)}>
           <div style={{ display: "flex", gap: 5, marginBottom: 5 }}>
             <div style={{ width: 46, flex: "none" }} />
             {view.days.map((d, i) => (
@@ -138,6 +139,7 @@ export function GroupHeatmap({
                   <div
                     key={d}
                     className="heatcell"
+                    onMouseEnter={() => setHovered(key)}
                     title={
                       count > 0
                         ? `${label(key)} — ${count}/${agg.total} free: ${cell!.names.join(", ")}`
@@ -259,6 +261,39 @@ export function GroupHeatmap({
               </div>
             </div>
           )}
+
+          {(() => {
+            const key = hovered ?? agg.bestKey;
+            const cell = key ? agg.cells.get(key) : undefined;
+            if (!key || !cell) return null;
+            return (
+              <div
+                style={{
+                  marginTop: 18,
+                  paddingTop: 16,
+                  borderTop: "1px solid var(--border-subtle)",
+                }}
+              >
+                <div style={{ fontSize: 11, color: "var(--fg-subtle)", marginBottom: 6 }}>
+                  {hovered ? "This slot" : "Best slot"}
+                </div>
+                <div style={{ fontWeight: 700, fontSize: 13 }}>{label(key)}</div>
+                <div style={{ fontSize: 12, color: "var(--botanical)", marginTop: 4 }}>
+                  Available · {cell.count}
+                </div>
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: "var(--fg-muted)",
+                    marginTop: 6,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {cell.names.join(", ")}
+                </div>
+              </div>
+            );
+          })()}
 
           {isHost && editToken && (
             <div

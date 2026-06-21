@@ -32,6 +32,8 @@ describe("GroupHeatmap", () => {
       { name: "Ada", tz: "UTC", slots: ["2026-07-15T09:00"], updatedAt: "" },
     ];
     render(<GroupHeatmap poll={makePoll(responses)} viewerTz="UTC" />);
-    expect(screen.getByText(/Wed 15, 09:00/)).toBeInTheDocument();
+    // appears in the best-slot card and the hovered/best detail panel
+    expect(screen.getAllByText(/Wed 15, 09:00/).length).toBeGreaterThan(0);
+    expect(screen.getByText("Available · 1")).toBeInTheDocument();
   });
 });
