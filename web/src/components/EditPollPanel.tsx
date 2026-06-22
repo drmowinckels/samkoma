@@ -5,7 +5,8 @@ const ERROR_TEXT: Record<string, string> = {
   not_additive:
     "Editing is additive — you can add days or widen the window, but not drop a day or time people may already have answered for.",
   from_after_to: "The end time needs to be after the start time.",
-  slot_change_unsupported: "The slot size can't be changed after a poll is created.",
+  slot_change_unsupported:
+    "The slot size can't be changed after a poll is created.",
   invalid_body: "Check the fields and try again.",
 };
 
@@ -83,7 +84,11 @@ export function EditPollPanel({
   return (
     <form
       className="card"
-      style={{ padding: 22, margin: "26px 0", borderLeft: "3px solid var(--brand)" }}
+      style={{
+        padding: 22,
+        margin: "26px 0",
+        borderLeft: "3px solid var(--brand)",
+      }}
       onSubmit={onSubmit}
     >
       <div
@@ -95,7 +100,11 @@ export function EditPollPanel({
         }}
       >
         <span className="fieldlbl">✏️ Edit poll</span>
-        <button type="button" className="btn btn-outline btn-sm" onClick={onClose}>
+        <button
+          type="button"
+          className="btn btn-outline btn-sm"
+          onClick={onClose}
+        >
           Close
         </button>
       </div>
@@ -165,7 +174,8 @@ export function EditPollPanel({
           </button>
         </div>
         <p className="subtle" style={{ margin: "7px 0 0", fontSize: 12 }}>
-          You can add days, but existing ones stay — people may have answered for them.
+          You can add days, but existing ones stay — people may have answered
+          for them.
         </p>
       </div>
 
@@ -198,13 +208,21 @@ export function EditPollPanel({
         </div>
         <div>
           <span className="fieldlbl">Slot size</span>
-          <p className="input" style={{ display: "flex", alignItems: "center", color: "var(--fg-muted)" }}>
+          <p
+            className="input"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              color: "var(--fg-muted)",
+            }}
+          >
             {poll.slot} min
           </p>
         </div>
       </div>
       <p className="subtle" style={{ margin: "-8px 0 16px", fontSize: 12 }}>
-        You can only widen the window (earlier start, later end), and the slot size is fixed.
+        You can only widen the window (earlier start, later end), and the slot
+        size is fixed.
       </p>
 
       <div

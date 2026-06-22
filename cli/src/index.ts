@@ -4,7 +4,8 @@ import { buildCreateBody, buildEditBody } from "./lib.js";
 import { createPoll, getBest, lockSlot, editPoll } from "./api.js";
 import { saveToken, getToken, TOKEN_FILE } from "./store.js";
 
-const DEFAULT_API = process.env.SAMKOMA_API ?? "https://api.samkoma.drmowinckels.io";
+const DEFAULT_API =
+  process.env.SAMKOMA_API ?? "https://api.samkoma.drmowinckels.io";
 
 const HELP = `samkoma — group scheduling from the command line
 
@@ -76,7 +77,8 @@ async function main() {
   if (command === "new") {
     const title = positionals[1];
     if (!title) throw new Error('Usage: samkoma new "<title>" --days <spec>');
-    if (!values.days) throw new Error("--days is required (e.g. --days mon-fri)");
+    if (!values.days)
+      throw new Error("--days is required (e.g. --days mon-fri)");
     const body = buildCreateBody({
       title,
       days: values.days,
@@ -90,7 +92,9 @@ async function main() {
     saveToken(created.id, created.editToken);
     console.log("✓ poll created");
     console.log(`  → ${created.url}`);
-    console.log(`  ${body.days.length} day(s), ${body.from}–${body.to}, ${body.slot}-min slots, ${body.tz}`);
+    console.log(
+      `  ${body.days.length} day(s), ${body.from}–${body.to}, ${body.slot}-min slots, ${body.tz}`,
+    );
     console.log(`  edit token saved to ${TOKEN_FILE}`);
     return;
   }
@@ -140,21 +144,30 @@ async function main() {
     }
     console.log(`${best.total} response(s) — best slots:`);
     for (const r of best.results) {
-      console.log(`  ${prettySlot(r.slot)}  ${r.count}/${best.total}  (${r.names.join(", ")})`);
+      console.log(
+        `  ${prettySlot(r.slot)}  ${r.count}/${best.total}  (${r.names.join(", ")})`,
+      );
     }
     return;
   }
 
   if (command === "lock" || command === "unlock") {
     const id = positionals[1];
-    if (!id) throw new Error(`Usage: samkoma ${command} <id>${command === "lock" ? " <slot>" : ""}`);
+    if (!id)
+      throw new Error(
+        `Usage: samkoma ${command} <id>${command === "lock" ? " <slot>" : ""}`,
+      );
     const token = getToken(id);
     if (!token) {
-      throw new Error(`No edit token for "${id}" in ${TOKEN_FILE} — only the host who created the poll can ${command} it.`);
+      throw new Error(
+        `No edit token for "${id}" in ${TOKEN_FILE} — only the host who created the poll can ${command} it.`,
+      );
     }
     const slot = command === "lock" ? positionals[2] : null;
     if (command === "lock" && !slot) {
-      throw new Error("Usage: samkoma lock <id> <slot>  (e.g. 2026-07-15T09:00)");
+      throw new Error(
+        "Usage: samkoma lock <id> <slot>  (e.g. 2026-07-15T09:00)",
+      );
     }
     const poll = await lockSlot(api, id, slot ?? null, token);
     console.log(

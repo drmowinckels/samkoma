@@ -114,7 +114,12 @@ describe("submitSlots", () => {
   it("throws on an invalid_slots rejection", async () => {
     mockFetch({ error: "invalid_slots" }, { status: 400 });
     await expect(
-      submitSlots("abc123", { name: "Ada", tz: "UTC", slots: ["x"], maybe: [] }),
+      submitSlots("abc123", {
+        name: "Ada",
+        tz: "UTC",
+        slots: ["x"],
+        maybe: [],
+      }),
     ).rejects.toMatchObject({ code: "invalid_slots", status: 400 });
   });
 });
@@ -139,7 +144,11 @@ describe("lockSlot", () => {
 
 describe("editPoll", () => {
   it("PATCHes the partial body with the edit token", async () => {
-    const fn = mockFetch({ id: "abc123", title: "Renamed", days: ["2026-07-15"] });
+    const fn = mockFetch({
+      id: "abc123",
+      title: "Renamed",
+      days: ["2026-07-15"],
+    });
     const poll = await editPoll("abc123", { title: "Renamed" }, "tok");
     expect(poll.title).toBe("Renamed");
     const [url, opts] = fn.mock.calls[0];
@@ -150,7 +159,10 @@ describe("editPoll", () => {
   });
 
   it("throws the server's code on a non-additive edit", async () => {
-    mockFetch({ error: "not_additive", removed: ["2026-07-16T09:00"] }, { status: 400 });
+    mockFetch(
+      { error: "not_additive", removed: ["2026-07-16T09:00"] },
+      { status: 400 },
+    );
     await expect(
       editPoll("abc123", { days: ["2026-07-15"] }, "tok"),
     ).rejects.toMatchObject({ code: "not_additive", status: 400 });

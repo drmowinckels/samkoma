@@ -18,8 +18,9 @@ function Harness() {
 
 // jsdom does not implement elementFromPoint; stand in for the hit-test.
 function stubHitTest(el: Element | null) {
-  document.elementFromPoint =
-    vi.fn(() => el) as unknown as typeof document.elementFromPoint;
+  document.elementFromPoint = vi.fn(
+    () => el,
+  ) as unknown as typeof document.elementFromPoint;
 }
 
 afterEach(() => {
@@ -35,12 +36,16 @@ describe("AvailabilityGrid drag painting", () => {
     stubHitTest(cellB);
 
     fireEvent.pointerDown(cellA);
-    expect(screen.getByRole("button", { name: /09:00.*available/i })).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: /09:00.*available/i }),
+    ).toBeTruthy();
 
     // A move (bubbling to the grid container) should paint the cell under the
     // pointer, even though no pointerenter fired on cell B.
     fireEvent.pointerMove(cellA, { clientX: 5, clientY: 5 });
-    expect(screen.getByRole("button", { name: /09:30.*available/i })).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: /09:30.*available/i }),
+    ).toBeTruthy();
 
     fireEvent.pointerUp(window);
   });

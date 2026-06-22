@@ -65,7 +65,9 @@ export function CreatePoll() {
 
   function addDate() {
     if (!newDate) return;
-    setExtraDays((prev) => (prev.includes(newDate) ? prev : [...prev, newDate]));
+    setExtraDays((prev) =>
+      prev.includes(newDate) ? prev : [...prev, newDate],
+    );
     setSelected((prev) => new Set(prev).add(newDate));
     setNewDate("");
   }
@@ -109,7 +111,11 @@ export function CreatePoll() {
         }}
         className="hero"
       >
-        <form className="card" style={{ padding: "32px 36px" }} onSubmit={onSubmit}>
+        <form
+          className="card"
+          style={{ padding: "32px 36px" }}
+          onSubmit={onSubmit}
+        >
           <h1 className="h2">New poll</h1>
           <p className="helper" style={{ margin: "6px 0 28px" }}>
             Two minutes, no account. You'll get a link to share and an edit link
@@ -117,7 +123,11 @@ export function CreatePoll() {
           </p>
 
           {error && (
-            <div className="error-banner" style={{ marginBottom: 22 }} role="alert">
+            <div
+              className="error-banner"
+              style={{ marginBottom: 22 }}
+              role="alert"
+            >
               {error}
             </div>
           )}
@@ -289,8 +299,8 @@ export function CreatePoll() {
             isPublic={isPublic}
           />
           <p className="subtle" style={{ fontSize: 13, margin: "14px 2px 0" }}>
-            The form and the CLI hit the same endpoint. Anything you can click, a
-            script can do.
+            The form and the CLI hit the same endpoint. Anything you can click,
+            a script can do.
           </p>
         </div>
       </div>

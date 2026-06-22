@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AvailabilityGrid } from "./AvailabilityGrid";
-import { submitSlots, ApiError, type Poll, type PollResponse } from "../lib/api";
+import {
+  submitSlots,
+  ApiError,
+  type Poll,
+  type PollResponse,
+} from "../lib/api";
 import { buildGridView } from "../lib/tz";
 import { marksFrom, splitMarks, type Marks } from "../lib/paint";
 import { getName, saveName, getOwnMarks, saveOwnMarks } from "../lib/storage";
@@ -22,7 +27,14 @@ export function RespondPanel({
 }) {
   const view = useMemo(
     () =>
-      buildGridView(poll.days, poll.from, poll.to, poll.slot, poll.tz, viewerTz),
+      buildGridView(
+        poll.days,
+        poll.from,
+        poll.to,
+        poll.slot,
+        poll.tz,
+        viewerTz,
+      ),
     [poll.days, poll.from, poll.to, poll.slot, poll.tz, viewerTz],
   );
 

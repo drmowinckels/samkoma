@@ -5,9 +5,7 @@ import {
 } from "@cloudflare/vitest-pool-workers/config";
 
 export default defineWorkersConfig(async () => {
-  const migrations = await readD1Migrations(
-    path.join(__dirname, "migrations"),
-  );
+  const migrations = await readD1Migrations(path.join(__dirname, "migrations"));
   return {
     test: {
       setupFiles: ["./test/apply-migrations.ts"],

@@ -38,7 +38,9 @@ describe("RespondPanel", () => {
     const cell0930 = screen.getByRole("button", { name: /09:30.*busy/i });
     cell0930.focus();
     await user.keyboard("{Enter}");
-    expect(screen.getByRole("button", { name: /09:30.*available/i })).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: /09:30.*available/i }),
+    ).toBeTruthy();
 
     // A response merge (e.g. someone else's autosave) changes the prop. The
     // restore effect must not re-run and reset 09:30 back to the cached state.
@@ -47,14 +49,24 @@ describe("RespondPanel", () => {
         poll={{
           ...poll,
           responses: [
-            { name: "Someone", tz, slots: ["2099-07-15T09:00"], maybe: [], updatedAt: "x" },
+            {
+              name: "Someone",
+              tz,
+              slots: ["2099-07-15T09:00"],
+              maybe: [],
+              updatedAt: "x",
+            },
           ],
         }}
         viewerTz={tz}
       />,
     );
 
-    expect(screen.getByRole("button", { name: /09:30.*available/i })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /09:00.*available/i })).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: /09:30.*available/i }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: /09:00.*available/i }),
+    ).toBeTruthy();
   });
 });

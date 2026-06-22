@@ -111,7 +111,12 @@ export function AvailabilityGrid({
       {view.times.map((t) => (
         <div
           key={t}
-          style={{ display: "flex", gap: 6, marginBottom: 6, alignItems: "center" }}
+          style={{
+            display: "flex",
+            gap: 6,
+            marginBottom: 6,
+            alignItems: "center",
+          }}
         >
           <div
             style={{
@@ -128,12 +133,22 @@ export function AvailabilityGrid({
           {view.days.map((d, di) => {
             const key = view.keyAt(d, t);
             if (key === null) {
-              return <div key={d} className="gridcell" style={{ visibility: "hidden" }} />;
+              return (
+                <div
+                  key={d}
+                  className="gridcell"
+                  style={{ visibility: "hidden" }}
+                />
+              );
             }
             const status = value.get(key);
             const h = headers[di];
             const word =
-              status === "yes" ? "available" : status === "maybe" ? "maybe" : "busy";
+              status === "yes"
+                ? "available"
+                : status === "maybe"
+                  ? "maybe"
+                  : "busy";
             return (
               <button
                 key={d}
@@ -174,11 +189,25 @@ export function AvailabilityGrid({
         }}
       >
         <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ width: 14, height: 14, borderRadius: 7, background: YES_BG }} />
+          <span
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: 7,
+              background: YES_BG,
+            }}
+          />
           available
         </span>
         <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ width: 14, height: 14, borderRadius: 7, background: MAYBE_BG }} />
+          <span
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: 7,
+              background: MAYBE_BG,
+            }}
+          />
           maybe
         </span>
         <span style={{ display: "flex", alignItems: "center", gap: 6 }}>

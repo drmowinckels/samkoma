@@ -263,12 +263,17 @@ export function PollPage() {
               aria-label="Shareable poll link"
               onFocus={(e) => e.currentTarget.select()}
             />
-            <button type="button" className="btn btn-primary btn-sm" onClick={copyLink}>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={copyLink}
+            >
               {copied ? "Copied" : "Copy"}
             </button>
           </div>
           <p className="subtle" style={{ fontSize: 13, margin: "12px 0 0" }}>
-            Anyone with this link can add their availability — no account needed.
+            Anyone with this link can add their availability — no account
+            needed.
             {poll.expiresAt && (
               <>
                 {" "}
@@ -315,9 +320,13 @@ export function PollPage() {
                     {hostCopied ? "Copied" : "Copy"}
                   </button>
                 </div>
-                <p className="subtle" style={{ fontSize: 13, margin: "12px 0 0" }}>
+                <p
+                  className="subtle"
+                  style={{ fontSize: 13, margin: "12px 0 0" }}
+                >
                   Keep this private — anyone with it can lock the poll and see
-                  private results. Open it on another device to manage from there.
+                  private results. Open it on another device to manage from
+                  there.
                 </p>
               </div>
             );
@@ -343,8 +352,12 @@ export function PollPage() {
             <p style={{ fontWeight: 700, fontSize: 15, margin: 0 }}>
               Results are private
             </p>
-            <p className="helper" style={{ margin: "8px auto 0", maxWidth: 360 }}>
-              The host kept the group results private. Your availability is saved.
+            <p
+              className="helper"
+              style={{ margin: "8px auto 0", maxWidth: 360 }}
+            >
+              The host kept the group results private. Your availability is
+              saved.
             </p>
           </div>
         )}

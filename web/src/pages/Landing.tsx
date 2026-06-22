@@ -45,7 +45,14 @@ export function Landing() {
             slot light up. No accounts required — and every poll is reachable
             from the API.
           </p>
-          <div style={{ display: "flex", gap: 14, marginTop: 30, flexWrap: "wrap" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: 14,
+              marginTop: 30,
+              flexWrap: "wrap",
+            }}
+          >
             <Link to="/new" className="btn btn-primary">
               Create a poll →
             </Link>
@@ -79,7 +86,10 @@ export function Landing() {
         className="steps"
       >
         {STEPS.map((s) => (
-          <div key={s.n} style={{ background: "var(--bg)", padding: "34px 28px" }}>
+          <div
+            key={s.n}
+            style={{ background: "var(--bg)", padding: "34px 28px" }}
+          >
             <div
               style={{
                 fontWeight: 800,

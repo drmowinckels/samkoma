@@ -10,9 +10,9 @@ import {
 describe("zonedTimeToUtc", () => {
   it("interprets a wall time in a zone (summer DST offset)", () => {
     // 2026-07-15 is CEST (UTC+2): 12:00 Oslo == 10:00 UTC
-    expect(zonedTimeToUtc("2026-07-15", "12:00", "Europe/Oslo").toISOString()).toBe(
-      "2026-07-15T10:00:00.000Z",
-    );
+    expect(
+      zonedTimeToUtc("2026-07-15", "12:00", "Europe/Oslo").toISOString(),
+    ).toBe("2026-07-15T10:00:00.000Z");
   });
 
   it("handles a fractional-offset zone (+05:30)", () => {
@@ -30,12 +30,12 @@ describe("zonedTimeToUtc", () => {
 
   it("uses each date's own DST offset (winter = CET +1, not summer +2)", () => {
     // Same wall time, two dates: Oslo is +1 in January, +2 in July.
-    expect(zonedTimeToUtc("2026-01-15", "12:00", "Europe/Oslo").toISOString()).toBe(
-      "2026-01-15T11:00:00.000Z",
-    );
-    expect(zonedTimeToUtc("2026-07-15", "12:00", "Europe/Oslo").toISOString()).toBe(
-      "2026-07-15T10:00:00.000Z",
-    );
+    expect(
+      zonedTimeToUtc("2026-01-15", "12:00", "Europe/Oslo").toISOString(),
+    ).toBe("2026-01-15T11:00:00.000Z");
+    expect(
+      zonedTimeToUtc("2026-07-15", "12:00", "Europe/Oslo").toISOString(),
+    ).toBe("2026-07-15T10:00:00.000Z");
   });
 });
 
@@ -48,9 +48,9 @@ describe("partsInTz", () => {
       time: "02:30",
     });
     // 02:00 UTC in New York == previous calendar day 22:00
-    expect(partsInTz(new Date("2026-07-15T02:00:00.000Z"), "America/New_York")).toEqual(
-      { date: "2026-07-14", time: "22:00" },
-    );
+    expect(
+      partsInTz(new Date("2026-07-15T02:00:00.000Z"), "America/New_York"),
+    ).toEqual({ date: "2026-07-14", time: "22:00" });
   });
 });
 
@@ -150,7 +150,11 @@ describe("formatSlotLabelInTz", () => {
   it("relabels a canonical slot in the viewer's zone", () => {
     // 2026-07-15 12:00 Oslo -> 06:00 New York, same calendar day (Wed 15)
     expect(
-      formatSlotLabelInTz("2026-07-15T12:00", "Europe/Oslo", "America/New_York"),
+      formatSlotLabelInTz(
+        "2026-07-15T12:00",
+        "Europe/Oslo",
+        "America/New_York",
+      ),
     ).toBe("Wed 15, 06:00");
   });
 

@@ -38,7 +38,12 @@ function renderPanel() {
   const onSaved = vi.fn();
   const onClose = vi.fn();
   render(
-    <EditPollPanel poll={poll} editToken="tok" onSaved={onSaved} onClose={onClose} />,
+    <EditPollPanel
+      poll={poll}
+      editToken="tok"
+      onSaved={onSaved}
+      onClose={onClose}
+    />,
   );
   return { onSaved, onClose };
 }
@@ -81,7 +86,9 @@ describe("EditPollPanel", () => {
     const user = userEvent.setup();
     renderPanel();
 
-    await user.click(screen.getByRole("checkbox", { name: /make results public/i }));
+    await user.click(
+      screen.getByRole("checkbox", { name: /make results public/i }),
+    );
 
     const save = screen.getByRole("button", { name: /save changes/i });
     expect(save).toBeDisabled();
@@ -105,7 +112,9 @@ describe("EditPollPanel", () => {
     await user.type(screen.getByLabelText("Event name"), " 2");
     await user.click(screen.getByRole("button", { name: /save changes/i }));
 
-    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/additive/i));
+    await waitFor(() =>
+      expect(screen.getByRole("alert")).toHaveTextContent(/additive/i),
+    );
     expect(onClose).not.toHaveBeenCalled();
   });
 });

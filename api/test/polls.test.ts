@@ -137,10 +137,15 @@ describe("GET /v1/polls/:id/best", () => {
   it("honors ?limit=", async () => {
     const { id } = (await (await post(validPoll)).json()) as { id: string };
     await submit(id, "Ada", ["2099-07-15T09:00", "2099-07-15T09:30"]);
-    const res = await SELF.fetch(`https://api.test/v1/polls/${id}/best?limit=1`, {
-      headers: { Origin: ORIGIN },
-    });
-    expect(((await res.json()) as { results: unknown[] }).results).toHaveLength(1);
+    const res = await SELF.fetch(
+      `https://api.test/v1/polls/${id}/best?limit=1`,
+      {
+        headers: { Origin: ORIGIN },
+      },
+    );
+    expect(((await res.json()) as { results: unknown[] }).results).toHaveLength(
+      1,
+    );
   });
 
   it("forbids results on a private poll without the edit token", async () => {
@@ -149,14 +154,23 @@ describe("GET /v1/polls/:id/best", () => {
     ).json()) as { id: string; editToken: string };
     await submit(created.id, "Ada", ["2099-07-15T09:00"]);
 
-    const anon = await SELF.fetch(`https://api.test/v1/polls/${created.id}/best`, {
-      headers: { Origin: ORIGIN },
-    });
+    const anon = await SELF.fetch(
+      `https://api.test/v1/polls/${created.id}/best`,
+      {
+        headers: { Origin: ORIGIN },
+      },
+    );
     expect(anon.status).toBe(403);
 
-    const host = await SELF.fetch(`https://api.test/v1/polls/${created.id}/best`, {
-      headers: { Origin: ORIGIN, Authorization: `Bearer ${created.editToken}` },
-    });
+    const host = await SELF.fetch(
+      `https://api.test/v1/polls/${created.id}/best`,
+      {
+        headers: {
+          Origin: ORIGIN,
+          Authorization: `Bearer ${created.editToken}`,
+        },
+      },
+    );
     expect(host.status).toBe(200);
   });
 
@@ -190,7 +204,9 @@ describe("POST /v1/polls/:id/lock", () => {
 
     const res = await lock(created.id, slot, created.editToken);
     expect(res.status).toBe(200);
-    expect(((await res.json()) as { lockedSlot: string }).lockedSlot).toBe(slot);
+    expect(((await res.json()) as { lockedSlot: string }).lockedSlot).toBe(
+      slot,
+    );
 
     const fetched = (await (
       await SELF.fetch(`https://api.test/v1/polls/${created.id}`, {
@@ -208,7 +224,9 @@ describe("POST /v1/polls/:id/lock", () => {
   it("forbids non-hosts (missing or wrong token)", async () => {
     const created = (await (await post(validPoll)).json()) as { id: string };
     expect((await lock(created.id, "2099-07-15T09:00")).status).toBe(403);
-    expect((await lock(created.id, "2099-07-15T09:00", "nope")).status).toBe(403);
+    expect((await lock(created.id, "2099-07-15T09:00", "nope")).status).toBe(
+      403,
+    );
   });
 
   it("rejects a slot outside the poll grid", async () => {
@@ -216,9 +234,9 @@ describe("POST /v1/polls/:id/lock", () => {
       id: string;
       editToken: string;
     };
-    expect((await lock(created.id, "2099-07-15T20:00", created.editToken)).status).toBe(
-      400,
-    );
+    expect(
+      (await lock(created.id, "2099-07-15T20:00", created.editToken)).status,
+    ).toBe(400);
   });
 });
 
@@ -250,7 +268,10 @@ describe("private poll results gating", () => {
 
     const host = (await (
       await SELF.fetch(`https://api.test/v1/polls/${created.id}`, {
-        headers: { Origin: ORIGIN, Authorization: `Bearer ${created.editToken}` },
+        headers: {
+          Origin: ORIGIN,
+          Authorization: `Bearer ${created.editToken}`,
+        },
       })
     ).json()) as { responses: Array<{ name: string }> };
     expect(host.responses).toHaveLength(1);
@@ -301,7 +322,9 @@ describe("PATCH /v1/polls/:id", () => {
     expect(((await res.json()) as { title: string }).title).toBe("Renamed");
 
     const poll = (await (
-      await SELF.fetch(`https://api.test/v1/polls/${id}`, { headers: { Origin: ORIGIN } })
+      await SELF.fetch(`https://api.test/v1/polls/${id}`, {
+        headers: { Origin: ORIGIN },
+      })
     ).json()) as { title: string };
     expect(poll.title).toBe("Renamed");
   });
@@ -337,10 +360,15 @@ describe("PATCH /v1/polls/:id", () => {
     await patch(id, { days: [...validPoll.days, "2099-07-18"] }, editToken);
 
     const poll = (await (
-      await SELF.fetch(`https://api.test/v1/polls/${id}`, { headers: { Origin: ORIGIN } })
+      await SELF.fetch(`https://api.test/v1/polls/${id}`, {
+        headers: { Origin: ORIGIN },
+      })
     ).json()) as { responses: Array<{ name: string; slots: string[] }> };
     expect(poll.responses).toHaveLength(1);
-    expect(poll.responses[0]).toMatchObject({ name: "Ada", slots: ["2099-07-15T09:00"] });
+    expect(poll.responses[0]).toMatchObject({
+      name: "Ada",
+      slots: ["2099-07-15T09:00"],
+    });
   });
 
   it("forbids non-hosts (missing or wrong token)", async () => {
@@ -353,42 +381,54 @@ describe("PATCH /v1/polls/:id", () => {
     const { id, editToken } = await newPoll();
     const res = await patch(id, { days: ["2099-07-15"] }, editToken);
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { error: string }).error).toBe("not_additive");
+    expect(((await res.json()) as { error: string }).error).toBe(
+      "not_additive",
+    );
   });
 
   it("rejects shrinking the window", async () => {
     const { id, editToken } = await newPoll();
     const res = await patch(id, { to: "12:00" }, editToken);
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { error: string }).error).toBe("not_additive");
+    expect(((await res.json()) as { error: string }).error).toBe(
+      "not_additive",
+    );
   });
 
   it("rejects extending the window off the slot grid", async () => {
     const { id, editToken } = await newPoll(); // 30-min slots from 09:00
     const res = await patch(id, { from: "08:45" }, editToken);
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { error: string }).error).toBe("not_additive");
+    expect(((await res.json()) as { error: string }).error).toBe(
+      "not_additive",
+    );
   });
 
   it("rejects changing the slot length", async () => {
     const { id, editToken } = await newPoll(); // slot 30
     const res = await patch(id, { slot: 60 }, editToken);
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { error: string }).error).toBe("slot_change_unsupported");
+    expect(((await res.json()) as { error: string }).error).toBe(
+      "slot_change_unsupported",
+    );
   });
 
   it("rejects a merged window where from is not before to", async () => {
     const { id, editToken } = await newPoll(); // from 09:00, to 15:00
     const res = await patch(id, { to: "08:00" }, editToken);
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { error: string }).error).toBe("from_after_to");
+    expect(((await res.json()) as { error: string }).error).toBe(
+      "from_after_to",
+    );
   });
 
   it("rejects an empty body", async () => {
     const { id, editToken } = await newPoll();
     const res = await patch(id, {}, editToken);
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { error: string }).error).toBe("invalid_body");
+    expect(((await res.json()) as { error: string }).error).toBe(
+      "invalid_body",
+    );
   });
 
   it("404s for an unknown poll", async () => {
@@ -429,8 +469,16 @@ describe("POST /v1/polls/:id/slots", () => {
 
   it("upserts the same name instead of duplicating", async () => {
     const { id } = await newPoll();
-    await submit(id, { name: "Ada", tz: "Europe/Oslo", slots: ["2099-07-15T09:00"] });
-    await submit(id, { name: "Ada", tz: "Europe/Oslo", slots: ["2099-07-16T10:00"] });
+    await submit(id, {
+      name: "Ada",
+      tz: "Europe/Oslo",
+      slots: ["2099-07-15T09:00"],
+    });
+    await submit(id, {
+      name: "Ada",
+      tz: "Europe/Oslo",
+      slots: ["2099-07-16T10:00"],
+    });
 
     const poll = (await (
       await SELF.fetch(`https://api.test/v1/polls/${id}`, {
@@ -449,7 +497,9 @@ describe("POST /v1/polls/:id/slots", () => {
       slots: ["2099-07-15T20:00"],
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { error: string }).error).toBe("invalid_slots");
+    expect(((await res.json()) as { error: string }).error).toBe(
+      "invalid_slots",
+    );
   });
 
   it("returns 404 when the poll does not exist", async () => {
@@ -491,7 +541,9 @@ describe("POST /v1/polls/:id/slots", () => {
       });
     }
     expect(res.status).toBe(429);
-    expect(((await res.json()) as { error: string }).error).toBe("rate_limited");
+    expect(((await res.json()) as { error: string }).error).toBe(
+      "rate_limited",
+    );
   });
 
   it("caps distinct respondents at MAX_RESPONSES (3 in tests)", async () => {
@@ -499,7 +551,11 @@ describe("POST /v1/polls/:id/slots", () => {
     let status = 0;
     for (const name of ["A", "B", "C", "D"]) {
       status = (
-        await submit(id, { name, tz: "Europe/Oslo", slots: ["2099-07-15T09:00"] })
+        await submit(id, {
+          name,
+          tz: "Europe/Oslo",
+          slots: ["2099-07-15T09:00"],
+        })
       ).status;
     }
     expect(status).toBe(429); // 4th distinct respondent rejected

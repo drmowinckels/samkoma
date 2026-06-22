@@ -22,7 +22,11 @@ function weekdayIndex(d: Date): number {
 // The soonest date that is the given weekday, on or after `today`.
 function nextOccurrence(weekday: number, today: Date): string {
   const ahead = (weekday - weekdayIndex(today) + 7) % 7;
-  const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + ahead);
+  const d = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() + ahead,
+  );
   return toISO(d);
 }
 
@@ -147,7 +151,11 @@ export function buildEditBody(
   if (opts.to !== undefined) body.to = parseTime(opts.to, "--to");
   if (opts.slot !== undefined) body.slot = parseSlot(opts.slot);
   if (opts.public !== undefined) body.public = opts.public;
-  if (body.from !== undefined && body.to !== undefined && body.from >= body.to) {
+  if (
+    body.from !== undefined &&
+    body.to !== undefined &&
+    body.from >= body.to
+  ) {
     throw new Error("--from must be earlier than --to");
   }
   if (Object.keys(body).length === 0) {
