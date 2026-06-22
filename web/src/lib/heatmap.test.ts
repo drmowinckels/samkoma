@@ -3,7 +3,11 @@ import { aggregate } from "./heatmap";
 import { formatSlotLabel } from "./datetime";
 import type { PollResponse } from "./api";
 
-const r = (name: string, slots: string[], maybe: string[] = []): PollResponse => ({
+const r = (
+  name: string,
+  slots: string[],
+  maybe: string[] = [],
+): PollResponse => ({
   name,
   tz: "UTC",
   slots,

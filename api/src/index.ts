@@ -36,7 +36,11 @@ app.onError((err, c) => {
 export default {
   fetch: app.fetch,
   // Daily cron: purge polls that expired (last day + grace period).
-  async scheduled(_event: ScheduledController, env: Env, _ctx: ExecutionContext) {
+  async scheduled(
+    _event: ScheduledController,
+    env: Env,
+    _ctx: ExecutionContext,
+  ) {
     // Independent steps — one failing must not skip the other.
     try {
       const removed = await deleteExpired(env.DB, todayUTC());

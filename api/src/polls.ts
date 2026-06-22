@@ -25,6 +25,10 @@ function bearerToken(c: Context): string | null {
   return header.startsWith("Bearer ") ? header.slice(7) : null;
 }
 
+function clientIp(c: Context): string {
+  return c.req.header("CF-Connecting-IP") ?? "anon";
+}
+
 function constantTimeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let diff = 0;
@@ -50,7 +54,8 @@ async function loadActivePoll(
     .bind(id)
     .first<PollRow>();
   if (!row) return c.json({ error: "not_found" }, 404);
-  if (isExpired(row.expires_at, todayUTC())) return c.json({ error: "expired" }, 410);
+  if (isExpired(row.expires_at, todayUTC()))
+    return c.json({ error: "expired" }, 410);
   return row;
 }
 
@@ -108,9 +113,8 @@ polls.post(
     if (!result.success) return badRequest(c, result.error.issues);
   }),
   async (c) => {
-    const ip = c.req.header("CF-Connecting-IP") ?? "anon";
     const limit = Number.parseInt(c.env.CREATE_LIMIT, 10) || 30;
-    if (!(await rateLimit(c.env.DB, `create:${ip}`, limit, 60))) {
+    if (!(await rateLimit(c.env.DB, `create:${clientIp(c)}`, limit, 60))) {
       return c.json({ error: "rate_limited" }, 429);
     }
 
@@ -226,7 +230,9 @@ polls.post(
     )
       .bind(id)
       .all<ResponseRow>();
-    return c.json(serializePoll({ ...row, locked_slot: slot }, responses.results));
+    return c.json(
+      serializePoll({ ...row, locked_slot: slot }, responses.results),
+    );
   },
 );
 
@@ -276,7 +282,10 @@ polls.patch(
     const newKeys = validSlotKeys(next.days, next.from, next.to, next.slot);
     const removed = [...oldKeys].filter((k) => !newKeys.has(k));
     if (removed.length > 0) {
-      return c.json({ error: "not_additive", removed: removed.slice(0, 10) }, 400);
+      return c.json(
+        { error: "not_additive", removed: removed.slice(0, 10) },
+        400,
+      );
     }
 
     const expiresAt = expiryDate(next.days, GRACE_DAYS);
@@ -325,6 +334,13 @@ polls.post(
     if (!result.success) return badRequest(c, result.error.issues);
   }),
   async (c) => {
+    // Per-IP throttle: the only authenticated-free write, so it needs a guard
+    // against a leaked link being flooded (junk responses + filling the cap).
+    const limit = Number.parseInt(c.env.SUBMIT_LIMIT, 10) || 120;
+    if (!(await rateLimit(c.env.DB, `slots:${clientIp(c)}`, limit, 60))) {
+      return c.json({ error: "rate_limited" }, 429);
+    }
+
     const id = c.req.param("id");
     const poll = await loadActivePoll(c, id);
     if (poll instanceof Response) return poll;
@@ -342,7 +358,10 @@ polls.post(
     );
     const invalid = [...slots, ...maybe].filter((s) => !valid.has(s));
     if (invalid.length > 0) {
-      return c.json({ error: "invalid_slots", invalid: invalid.slice(0, 10) }, 400);
+      return c.json(
+        { error: "invalid_slots", invalid: invalid.slice(0, 10) },
+        400,
+      );
     }
 
     // Cap distinct respondents per poll (existing names just upsert).
@@ -365,9 +384,22 @@ polls.post(
        DO UPDATE SET tz = excluded.tz, slots = excluded.slots,
                      maybe = excluded.maybe, updated_at = excluded.updated_at`,
     )
-      .bind(id, body.name, body.tz, JSON.stringify(slots), JSON.stringify(maybe), now)
+      .bind(
+        id,
+        body.name,
+        body.tz,
+        JSON.stringify(slots),
+        JSON.stringify(maybe),
+        now,
+      )
       .run();
 
-    return c.json({ name: body.name, tz: body.tz, slots, maybe, updatedAt: now });
+    return c.json({
+      name: body.name,
+      tz: body.tz,
+      slots,
+      maybe,
+      updatedAt: now,
+    });
   },
 );

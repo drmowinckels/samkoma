@@ -32,6 +32,7 @@ export function AvailabilityGrid({
 }: GridProps) {
   const dragging = useRef(false);
   const target = useRef<Status | undefined>(undefined);
+  const lastPainted = useRef<string | null>(null);
   const commitRef = useRef(onCommit);
   commitRef.current = onCommit;
 
@@ -41,6 +42,7 @@ export function AvailabilityGrid({
     const end = () => {
       if (dragging.current) {
         dragging.current = false;
+        lastPainted.current = null;
         commitRef.current?.();
       }
     };
@@ -58,12 +60,24 @@ export function AvailabilityGrid({
     const next = cycleNext(value.get(key));
     target.current = next;
     dragging.current = true;
+    lastPainted.current = key;
     onChange((prev) => applyMark(prev, key, next));
   }
 
-  function enter(key: string) {
-    if (disabled || !dragging.current) return;
+  function paintAt(key: string) {
+    if (disabled || !dragging.current || lastPainted.current === key) return;
+    lastPainted.current = key;
     onChange((prev) => applyMark(prev, key, target.current));
+  }
+
+  // Continue the drag via hit-testing rather than per-cell pointerenter, which
+  // never fires for the moving finger on touch devices (the first cell captures
+  // the pointer). Works for mouse and touch alike.
+  function onPointerMove(e: React.PointerEvent) {
+    if (!dragging.current) return;
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const key = el?.closest<HTMLElement>("[data-key]")?.dataset.key;
+    if (key) paintAt(key);
   }
 
   function toggleKey(key: string) {
@@ -74,7 +88,7 @@ export function AvailabilityGrid({
   }
 
   return (
-    <div style={{ userSelect: "none" }}>
+    <div style={{ userSelect: "none" }} onPointerMove={onPointerMove}>
       <div style={{ display: "flex", gap: 6, marginBottom: 6 }}>
         <div style={{ width: GUTTER, flex: "none" }} />
         {view.days.map((d, i) => (
@@ -97,7 +111,12 @@ export function AvailabilityGrid({
       {view.times.map((t) => (
         <div
           key={t}
-          style={{ display: "flex", gap: 6, marginBottom: 6, alignItems: "center" }}
+          style={{
+            display: "flex",
+            gap: 6,
+            marginBottom: 6,
+            alignItems: "center",
+          }}
         >
           <div
             style={{
@@ -114,21 +133,31 @@ export function AvailabilityGrid({
           {view.days.map((d, di) => {
             const key = view.keyAt(d, t);
             if (key === null) {
-              return <div key={d} className="gridcell" style={{ visibility: "hidden" }} />;
+              return (
+                <div
+                  key={d}
+                  className="gridcell"
+                  style={{ visibility: "hidden" }}
+                />
+              );
             }
             const status = value.get(key);
             const h = headers[di];
             const word =
-              status === "yes" ? "available" : status === "maybe" ? "maybe" : "busy";
+              status === "yes"
+                ? "available"
+                : status === "maybe"
+                  ? "maybe"
+                  : "busy";
             return (
               <button
                 key={d}
                 type="button"
                 className="gridcell"
+                data-key={key}
                 aria-label={`${h.weekday} ${h.day}, ${t} — ${word}`}
                 disabled={disabled}
                 onPointerDown={(e) => start(key, e)}
-                onPointerEnter={() => enter(key)}
                 onKeyDown={(e) => {
                   if (e.key === " " || e.key === "Enter") {
                     e.preventDefault();
@@ -137,6 +166,7 @@ export function AvailabilityGrid({
                 }}
                 style={{
                   background: bgFor(status),
+                  touchAction: "none",
                   boxShadow:
                     status === undefined
                       ? "inset 0 0 0 1px var(--border-subtle)"
@@ -159,11 +189,25 @@ export function AvailabilityGrid({
         }}
       >
         <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ width: 14, height: 14, borderRadius: 7, background: YES_BG }} />
+          <span
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: 7,
+              background: YES_BG,
+            }}
+          />
           available
         </span>
         <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ width: 14, height: 14, borderRadius: 7, background: MAYBE_BG }} />
+          <span
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: 7,
+              background: MAYBE_BG,
+            }}
+          />
           maybe
         </span>
         <span style={{ display: "flex", alignItems: "center", gap: 6 }}>

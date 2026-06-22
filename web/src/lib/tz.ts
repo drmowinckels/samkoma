@@ -48,7 +48,11 @@ function tzOffsetMs(instant: Date, tz: string): number {
 }
 
 // Interpret a wall-clock (date + HH:MM) in `tz` and return the UTC instant.
-export function zonedTimeToUtc(dateISO: string, time: string, tz: string): Date {
+export function zonedTimeToUtc(
+  dateISO: string,
+  time: string,
+  tz: string,
+): Date {
   const [y, mo, d] = dateISO.split("-").map(Number);
   const [h, mi] = time.split(":").map(Number);
   const wall = Date.UTC(y, mo - 1, d, h, mi);
@@ -68,7 +72,10 @@ export function partsInTz(
   tz: string,
 ): { date: string; time: string } {
   const m = fmtParts(instant, tz, false);
-  return { date: `${m.year}-${m.month}-${m.day}`, time: `${m.hour}:${m.minute}` };
+  return {
+    date: `${m.year}-${m.month}-${m.day}`,
+    time: `${m.hour}:${m.minute}`,
+  };
 }
 
 // A wall-clock time exists in `tz` iff it round-trips. It won't when it falls in

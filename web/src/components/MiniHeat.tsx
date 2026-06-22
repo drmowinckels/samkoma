@@ -26,7 +26,9 @@ export function MiniHeat() {
           marginBottom: 14,
         }}
       >
-        <span style={{ fontWeight: 700, fontSize: 14 }}>Group availability</span>
+        <span style={{ fontWeight: 700, fontSize: 14 }}>
+          Group availability
+        </span>
         <span style={{ fontSize: 12, color: "var(--fg-subtle)" }}>
           9 respondents
         </span>
@@ -54,7 +56,12 @@ export function MiniHeat() {
       {Array.from({ length: ROWS }, (_, t) => (
         <div
           key={t}
-          style={{ display: "flex", gap: 5, marginTop: 5, alignItems: "center" }}
+          style={{
+            display: "flex",
+            gap: 5,
+            marginTop: 5,
+            alignItems: "center",
+          }}
         >
           <div
             style={{

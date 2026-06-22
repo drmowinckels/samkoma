@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AvailabilityGrid } from "./AvailabilityGrid";
-import { submitSlots, ApiError, type Poll, type PollResponse } from "../lib/api";
+import {
+  submitSlots,
+  ApiError,
+  type Poll,
+  type PollResponse,
+} from "../lib/api";
 import { buildGridView } from "../lib/tz";
 import { marksFrom, splitMarks, type Marks } from "../lib/paint";
 import { getName, saveName, getOwnMarks, saveOwnMarks } from "../lib/storage";
@@ -22,7 +27,14 @@ export function RespondPanel({
 }) {
   const view = useMemo(
     () =>
-      buildGridView(poll.days, poll.from, poll.to, poll.slot, poll.tz, viewerTz),
+      buildGridView(
+        poll.days,
+        poll.from,
+        poll.to,
+        poll.slot,
+        poll.tz,
+        viewerTz,
+      ),
     [poll.days, poll.from, poll.to, poll.slot, poll.tz, viewerTz],
   );
 
@@ -32,9 +44,14 @@ export function RespondPanel({
   const [marks, setMarks] = useState<Marks>(new Map());
   const [save, setSave] = useState<SaveState>({ kind: "idle" });
 
-  // Restore this person's availability once: from the server (their saved name
-  // matches a response), else from the local cache (private polls hide others).
+  // Restore this person's availability once per poll: from the server (their
+  // saved name matches a response), else from the local cache (private polls
+  // hide others). Guarded by poll id so a later response merge — which changes
+  // poll.responses — doesn't re-run this and clobber in-progress painting.
+  const restoredFor = useRef<string | null>(null);
   useEffect(() => {
+    if (restoredFor.current === poll.id) return;
+    restoredFor.current = poll.id;
     const mine = initialName
       ? poll.responses.find((r) => r.name === initialName)
       : undefined;

@@ -74,7 +74,12 @@ describe("parseTime", () => {
 describe("buildCreateBody", () => {
   it("builds a valid poll body with defaults", () => {
     const body = buildCreateBody(
-      { title: "  Team offsite ", days: "2026-07-15", tz: "Europe/Oslo", public: true },
+      {
+        title: "  Team offsite ",
+        days: "2026-07-15",
+        tz: "Europe/Oslo",
+        public: true,
+      },
       today,
     );
     expect(body).toEqual({
@@ -90,11 +95,21 @@ describe("buildCreateBody", () => {
 
   it("rejects an empty title and an inverted time range", () => {
     expect(() =>
-      buildCreateBody({ title: "  ", days: "mon", tz: "UTC", public: false }, today),
+      buildCreateBody(
+        { title: "  ", days: "mon", tz: "UTC", public: false },
+        today,
+      ),
     ).toThrow();
     expect(() =>
       buildCreateBody(
-        { title: "x", days: "mon", from: "15:00", to: "09:00", tz: "UTC", public: false },
+        {
+          title: "x",
+          days: "mon",
+          from: "15:00",
+          to: "09:00",
+          tz: "UTC",
+          public: false,
+        },
         today,
       ),
     ).toThrow();
@@ -103,7 +118,9 @@ describe("buildCreateBody", () => {
 
 describe("buildEditBody", () => {
   it("includes only the fields that were passed", () => {
-    expect(buildEditBody({ title: "  Renamed " }, today)).toEqual({ title: "Renamed" });
+    expect(buildEditBody({ title: "  Renamed " }, today)).toEqual({
+      title: "Renamed",
+    });
     expect(buildEditBody({ days: "2026-07-15,2026-07-16" }, today)).toEqual({
       days: ["2026-07-15", "2026-07-16"],
     });
@@ -117,7 +134,9 @@ describe("buildEditBody", () => {
   });
 
   it("validates an inverted range only when both ends are given", () => {
-    expect(() => buildEditBody({ from: "15:00", to: "09:00" }, today)).toThrow();
+    expect(() =>
+      buildEditBody({ from: "15:00", to: "09:00" }, today),
+    ).toThrow();
     expect(buildEditBody({ from: "20:00" }, today)).toEqual({ from: "20:00" }); // server checks vs existing 'to'
   });
 

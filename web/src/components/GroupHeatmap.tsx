@@ -42,7 +42,14 @@ export function GroupHeatmap({
 
   const view = useMemo(
     () =>
-      buildGridView(poll.days, poll.from, poll.to, poll.slot, poll.tz, viewerTz),
+      buildGridView(
+        poll.days,
+        poll.from,
+        poll.to,
+        poll.slot,
+        poll.tz,
+        viewerTz,
+      ),
     [poll.days, poll.from, poll.to, poll.slot, poll.tz, viewerTz],
   );
   const headers = useMemo(() => view.days.map((d) => dayHeader(d)), [view]);
@@ -115,7 +122,12 @@ export function GroupHeatmap({
           {view.times.map((t) => (
             <div
               key={t}
-              style={{ display: "flex", gap: 5, marginBottom: 5, alignItems: "center" }}
+              style={{
+                display: "flex",
+                gap: 5,
+                marginBottom: 5,
+                alignItems: "center",
+              }}
             >
               <div
                 style={{
@@ -132,7 +144,13 @@ export function GroupHeatmap({
               {view.days.map((d) => {
                 const key = view.keyAt(d, t);
                 if (key === null) {
-                  return <div key={d} className="heatcell" style={{ visibility: "hidden" }} />;
+                  return (
+                    <div
+                      key={d}
+                      className="heatcell"
+                      style={{ visibility: "hidden" }}
+                    />
+                  );
                 }
                 const cell = agg.cells.get(key);
                 const count = cell?.count ?? 0;
@@ -200,9 +218,21 @@ export function GroupHeatmap({
               }}
             />
             <span>{agg.total}</span>
-            <span style={{ display: "flex", alignItems: "center", gap: 5, marginLeft: 6 }}>
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 5,
+                marginLeft: 6,
+              }}
+            >
               <span
-                style={{ width: 14, height: 14, borderRadius: 4, background: HATCH }}
+                style={{
+                  width: 14,
+                  height: 14,
+                  borderRadius: 4,
+                  background: HATCH,
+                }}
               />
               maybe
             </span>
@@ -293,13 +323,27 @@ export function GroupHeatmap({
                   borderTop: "1px solid var(--border-subtle)",
                 }}
               >
-                <div style={{ fontSize: 11, color: "var(--fg-subtle)", marginBottom: 6 }}>
+                <div
+                  style={{
+                    fontSize: 11,
+                    color: "var(--fg-subtle)",
+                    marginBottom: 6,
+                  }}
+                >
                   {hovered ? "This slot" : "Best slot"}
                 </div>
-                <div style={{ fontWeight: 700, fontSize: 13 }}>{label(key)}</div>
+                <div style={{ fontWeight: 700, fontSize: 13 }}>
+                  {label(key)}
+                </div>
                 {cell.count > 0 && (
                   <>
-                    <div style={{ fontSize: 12, color: "var(--botanical)", marginTop: 4 }}>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: "var(--botanical)",
+                        marginTop: 4,
+                      }}
+                    >
                       Available · {cell.count}
                     </div>
                     <div
@@ -316,7 +360,13 @@ export function GroupHeatmap({
                 )}
                 {cell.maybe > 0 && (
                   <>
-                    <div style={{ fontSize: 12, color: "var(--fg-subtle)", marginTop: 8 }}>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: "var(--fg-subtle)",
+                        marginTop: 8,
+                      }}
+                    >
                       Maybe · {cell.maybe}
                     </div>
                     <div
@@ -371,7 +421,10 @@ export function GroupHeatmap({
                       >
                         {locking ? "Locking…" : `Lock in ${label(target)}`}
                       </button>
-                      <p className="subtle" style={{ fontSize: 12, margin: "8px 0 0" }}>
+                      <p
+                        className="subtle"
+                        style={{ fontSize: 12, margin: "8px 0 0" }}
+                      >
                         {selected
                           ? "Tap another slot to change your pick."
                           : "Best slot picked — tap any slot to choose a different one."}

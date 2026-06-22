@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Shell } from "../components/Shell";
 import { RespondPanel } from "../components/RespondPanel";
@@ -38,6 +38,10 @@ export function PollPage() {
   const [copied, setCopied] = useState(false);
   const [hostCopied, setHostCopied] = useState(false);
   const [editing, setEditing] = useState(false);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+  useEffect(() => () => clearTimeout(toastTimer.current), []);
 
   useEffect(() => {
     let active = true;
@@ -78,7 +82,8 @@ export function PollPage() {
     try {
       await navigator.clipboard.writeText(window.location.href);
       setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
+      clearTimeout(toastTimer.current);
+      toastTimer.current = setTimeout(() => setCopied(false), 1800);
     } catch {
       setCopied(false);
     }
@@ -88,7 +93,8 @@ export function PollPage() {
     try {
       await navigator.clipboard.writeText(link);
       setHostCopied(true);
-      setTimeout(() => setHostCopied(false), 1800);
+      clearTimeout(toastTimer.current);
+      toastTimer.current = setTimeout(() => setHostCopied(false), 1800);
     } catch {
       setHostCopied(false);
     }
@@ -263,12 +269,17 @@ export function PollPage() {
               aria-label="Shareable poll link"
               onFocus={(e) => e.currentTarget.select()}
             />
-            <button type="button" className="btn btn-primary btn-sm" onClick={copyLink}>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={copyLink}
+            >
               {copied ? "Copied" : "Copy"}
             </button>
           </div>
           <p className="subtle" style={{ fontSize: 13, margin: "12px 0 0" }}>
-            Anyone with this link can add their availability — no account needed.
+            Anyone with this link can add their availability — no account
+            needed.
             {poll.expiresAt && (
               <>
                 {" "}
@@ -315,9 +326,13 @@ export function PollPage() {
                     {hostCopied ? "Copied" : "Copy"}
                   </button>
                 </div>
-                <p className="subtle" style={{ fontSize: 13, margin: "12px 0 0" }}>
+                <p
+                  className="subtle"
+                  style={{ fontSize: 13, margin: "12px 0 0" }}
+                >
                   Keep this private — anyone with it can lock the poll and see
-                  private results. Open it on another device to manage from there.
+                  private results. Open it on another device to manage from
+                  there.
                 </p>
               </div>
             );
@@ -343,8 +358,12 @@ export function PollPage() {
             <p style={{ fontWeight: 700, fontSize: 15, margin: 0 }}>
               Results are private
             </p>
-            <p className="helper" style={{ margin: "8px auto 0", maxWidth: 360 }}>
-              The host kept the group results private. Your availability is saved.
+            <p
+              className="helper"
+              style={{ margin: "8px auto 0", maxWidth: 360 }}
+            >
+              The host kept the group results private. Your availability is
+              saved.
             </p>
           </div>
         )}

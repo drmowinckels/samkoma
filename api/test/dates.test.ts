@@ -3,9 +3,9 @@ import { expiryDate, isExpired } from "../src/dates";
 
 describe("expiryDate", () => {
   it("is the latest day plus the grace period", () => {
-    expect(
-      expiryDate(["2099-07-15", "2099-07-10", "2099-07-17"], 14),
-    ).toBe("2099-07-31");
+    expect(expiryDate(["2099-07-15", "2099-07-10", "2099-07-17"], 14)).toBe(
+      "2099-07-31",
+    );
   });
 
   it("rolls over month boundaries", () => {

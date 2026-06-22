@@ -13,7 +13,9 @@ export async function deleteExpired(
       )
       .bind(today),
     db
-      .prepare(`DELETE FROM polls WHERE expires_at IS NOT NULL AND expires_at < ?`)
+      .prepare(
+        `DELETE FROM polls WHERE expires_at IS NOT NULL AND expires_at < ?`,
+      )
       .bind(today),
   ]);
   return results[1].meta.changes ?? 0;

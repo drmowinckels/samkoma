@@ -5,7 +5,8 @@ const ERROR_TEXT: Record<string, string> = {
   not_additive:
     "Editing is additive — you can add days or widen the window, but not drop a day or time people may already have answered for.",
   from_after_to: "The end time needs to be after the start time.",
-  slot_change_unsupported: "The slot size can't be changed after a poll is created.",
+  slot_change_unsupported:
+    "The slot size can't be changed after a poll is created.",
   invalid_body: "Check the fields and try again.",
 };
 
@@ -26,8 +27,13 @@ export function EditPollPanel({
   const [from, setFrom] = useState(poll.from);
   const [to, setTo] = useState(poll.to);
   const [isPublic, setIsPublic] = useState(poll.public);
+  const [confirmPublic, setConfirmPublic] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Flipping a private poll public retroactively exposes the names and
+  // availability of everyone who already answered, so require explicit consent.
+  const goingPublic = !poll.public && isPublic;
 
   const currentDays = useMemo(() => [...poll.days].sort(), [poll.days]);
   const minNewDate = currentDays[currentDays.length - 1] ?? "";
@@ -58,7 +64,7 @@ export function EditPollPanel({
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!dirty || saving) return;
+    if (!dirty || saving || (goingPublic && !confirmPublic)) return;
     setSaving(true);
     setError(null);
     try {
@@ -78,7 +84,11 @@ export function EditPollPanel({
   return (
     <form
       className="card"
-      style={{ padding: 22, margin: "26px 0", borderLeft: "3px solid var(--brand)" }}
+      style={{
+        padding: 22,
+        margin: "26px 0",
+        borderLeft: "3px solid var(--brand)",
+      }}
       onSubmit={onSubmit}
     >
       <div
@@ -90,7 +100,11 @@ export function EditPollPanel({
         }}
       >
         <span className="fieldlbl">✏️ Edit poll</span>
-        <button type="button" className="btn btn-outline btn-sm" onClick={onClose}>
+        <button
+          type="button"
+          className="btn btn-outline btn-sm"
+          onClick={onClose}
+        >
           Close
         </button>
       </div>
@@ -160,7 +174,8 @@ export function EditPollPanel({
           </button>
         </div>
         <p className="subtle" style={{ margin: "7px 0 0", fontSize: 12 }}>
-          You can add days, but existing ones stay — people may have answered for them.
+          You can add days, but existing ones stay — people may have answered
+          for them.
         </p>
       </div>
 
@@ -193,13 +208,21 @@ export function EditPollPanel({
         </div>
         <div>
           <span className="fieldlbl">Slot size</span>
-          <p className="input" style={{ display: "flex", alignItems: "center", color: "var(--fg-muted)" }}>
+          <p
+            className="input"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              color: "var(--fg-muted)",
+            }}
+          >
             {poll.slot} min
           </p>
         </div>
       </div>
       <p className="subtle" style={{ margin: "-8px 0 16px", fontSize: 12 }}>
-        You can only widen the window (earlier start, later end), and the slot size is fixed.
+        You can only widen the window (earlier start, later end), and the slot
+        size is fixed.
       </p>
 
       <div
@@ -217,17 +240,46 @@ export function EditPollPanel({
           <input
             type="checkbox"
             checked={isPublic}
-            onChange={(e) => setIsPublic(e.target.checked)}
+            onChange={(e) => {
+              setIsPublic(e.target.checked);
+              if (!e.target.checked) setConfirmPublic(false);
+            }}
           />
           <span className="switch-track">
             <span className="switch-knob" />
           </span>
           Make results public
         </label>
-        <button type="submit" className="btn btn-primary" disabled={!dirty || saving}>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={!dirty || saving || (goingPublic && !confirmPublic)}
+        >
           {saving ? "Saving…" : "Save changes"}
         </button>
       </div>
+
+      {goingPublic && (
+        <div className="error-banner" role="alert" style={{ marginTop: 16 }}>
+          <strong>Heads up:</strong> making results public reveals the names and
+          painted availability of everyone who already answered while this poll
+          was private. This can't be undone for answers they've already given.
+          <label
+            className="switch"
+            style={{ marginTop: 12, fontSize: 13, fontWeight: 600 }}
+          >
+            <input
+              type="checkbox"
+              checked={confirmPublic}
+              onChange={(e) => setConfirmPublic(e.target.checked)}
+            />
+            <span className="switch-track">
+              <span className="switch-knob" />
+            </span>
+            I understand — make past responses public
+          </label>
+        </div>
+      )}
     </form>
   );
 }

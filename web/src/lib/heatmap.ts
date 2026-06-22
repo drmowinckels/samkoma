@@ -52,5 +52,10 @@ export function aggregate(responses: PollResponse[]): Aggregate {
       a.slot.localeCompare(b.slot),
   );
 
-  return { total: responses.length, cells, ranked, bestKey: ranked[0]?.slot ?? null };
+  return {
+    total: responses.length,
+    cells,
+    ranked,
+    bestKey: ranked[0]?.slot ?? null,
+  };
 }

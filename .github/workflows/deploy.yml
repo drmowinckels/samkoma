@@ -10,6 +10,19 @@ permissions:
   contents: read
 
 jobs:
+  format:
+    name: Format (prettier)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run format:check
+
   test-api:
     name: Test API
     runs-on: ubuntu-latest
@@ -21,6 +34,8 @@ jobs:
           cache: npm
           cache-dependency-path: api/package-lock.json
       - run: npm ci
+        working-directory: api
+      - run: npm run typecheck
         working-directory: api
       - run: npm test
         working-directory: api

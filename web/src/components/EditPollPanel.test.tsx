@@ -38,7 +38,12 @@ function renderPanel() {
   const onSaved = vi.fn();
   const onClose = vi.fn();
   render(
-    <EditPollPanel poll={poll} editToken="tok" onSaved={onSaved} onClose={onClose} />,
+    <EditPollPanel
+      poll={poll}
+      editToken="tok"
+      onSaved={onSaved}
+      onClose={onClose}
+    />,
   );
   return { onSaved, onClose };
 }
@@ -76,6 +81,29 @@ describe("EditPollPanel", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
+  it("requires explicit confirmation before flipping a private poll public", async () => {
+    editPoll.mockResolvedValue({ ...poll, public: true });
+    const user = userEvent.setup();
+    renderPanel();
+
+    await user.click(
+      screen.getByRole("checkbox", { name: /make results public/i }),
+    );
+
+    const save = screen.getByRole("button", { name: /save changes/i });
+    expect(save).toBeDisabled();
+    expect(screen.getByRole("alert")).toHaveTextContent(/reveals the names/i);
+
+    await user.click(
+      screen.getByRole("checkbox", { name: /make past responses public/i }),
+    );
+    expect(save).toBeEnabled();
+
+    await user.click(save);
+    await waitFor(() => expect(editPoll).toHaveBeenCalledTimes(1));
+    expect(editPoll.mock.calls[0][1]).toEqual({ public: true });
+  });
+
   it("maps a not_additive rejection to a friendly message and stays open", async () => {
     editPoll.mockRejectedValue(new ApiError("not_additive", 400));
     const user = userEvent.setup();
@@ -84,7 +112,9 @@ describe("EditPollPanel", () => {
     await user.type(screen.getByLabelText("Event name"), " 2");
     await user.click(screen.getByRole("button", { name: /save changes/i }));
 
-    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/additive/i));
+    await waitFor(() =>
+      expect(screen.getByRole("alert")).toHaveTextContent(/additive/i),
+    );
     expect(onClose).not.toHaveBeenCalled();
   });
 });
