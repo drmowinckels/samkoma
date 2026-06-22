@@ -26,8 +26,13 @@ export function EditPollPanel({
   const [from, setFrom] = useState(poll.from);
   const [to, setTo] = useState(poll.to);
   const [isPublic, setIsPublic] = useState(poll.public);
+  const [confirmPublic, setConfirmPublic] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Flipping a private poll public retroactively exposes the names and
+  // availability of everyone who already answered, so require explicit consent.
+  const goingPublic = !poll.public && isPublic;
 
   const currentDays = useMemo(() => [...poll.days].sort(), [poll.days]);
   const minNewDate = currentDays[currentDays.length - 1] ?? "";
@@ -58,7 +63,7 @@ export function EditPollPanel({
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!dirty || saving) return;
+    if (!dirty || saving || (goingPublic && !confirmPublic)) return;
     setSaving(true);
     setError(null);
     try {
@@ -217,17 +222,46 @@ export function EditPollPanel({
           <input
             type="checkbox"
             checked={isPublic}
-            onChange={(e) => setIsPublic(e.target.checked)}
+            onChange={(e) => {
+              setIsPublic(e.target.checked);
+              if (!e.target.checked) setConfirmPublic(false);
+            }}
           />
           <span className="switch-track">
             <span className="switch-knob" />
           </span>
           Make results public
         </label>
-        <button type="submit" className="btn btn-primary" disabled={!dirty || saving}>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={!dirty || saving || (goingPublic && !confirmPublic)}
+        >
           {saving ? "Saving…" : "Save changes"}
         </button>
       </div>
+
+      {goingPublic && (
+        <div className="error-banner" role="alert" style={{ marginTop: 16 }}>
+          <strong>Heads up:</strong> making results public reveals the names and
+          painted availability of everyone who already answered while this poll
+          was private. This can't be undone for answers they've already given.
+          <label
+            className="switch"
+            style={{ marginTop: 12, fontSize: 13, fontWeight: 600 }}
+          >
+            <input
+              type="checkbox"
+              checked={confirmPublic}
+              onChange={(e) => setConfirmPublic(e.target.checked)}
+            />
+            <span className="switch-track">
+              <span className="switch-knob" />
+            </span>
+            I understand — make past responses public
+          </label>
+        </div>
+      )}
     </form>
   );
 }
