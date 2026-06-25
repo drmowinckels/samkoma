@@ -10,7 +10,8 @@ vi.mock("react-router-dom", async (importOriginal) => {
 });
 
 const createPoll = vi.fn();
-vi.mock("../lib/api", () => ({
+vi.mock("../lib/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../lib/api")>()),
   createPoll: (...args: unknown[]) => createPoll(...args),
   ApiError: class ApiError extends Error {},
 }));

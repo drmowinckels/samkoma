@@ -6,7 +6,8 @@ import type { Poll } from "../lib/api";
 
 const getPoll = vi.fn();
 const editPoll = vi.fn();
-vi.mock("../lib/api", () => ({
+vi.mock("../lib/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../lib/api")>()),
   getPoll: (...a: unknown[]) => getPoll(...a),
   editPoll: (...a: unknown[]) => editPoll(...a),
   icsUrl: (id: string) => `https://api.test/v1/polls/${id}/ics`,

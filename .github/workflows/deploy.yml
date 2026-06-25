@@ -65,6 +65,10 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
+      # The committed web/public/openapi.json is generated from the API spec.
+      # Regenerate and fail if it drifted from the zod source of truth.
+      - run: npm run gen:openapi
+      - run: git diff --exit-code web/public/openapi.json
       - run: npm run test -w samkoma-web
       - run: npm run build -w samkoma-web
 

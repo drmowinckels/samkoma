@@ -1,6 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import type { ReactNode } from "react";
 import { useTheme } from "../lib/useTheme";
+import { Logo, Mark } from "./Logo";
+import { GITHUB_URL, SUPPORT_URL } from "../lib/links";
+import { apiDocsUrl } from "../lib/api";
 
 interface ShellProps {
   children: ReactNode;
@@ -14,12 +17,24 @@ export function Shell({ children, showNewPoll = true }: ShellProps) {
     <div className="page">
       <header className="shell">
         <nav className="nav" aria-label="Primary">
-          <div className="nav-links">
-            <Link to="/" className="wordmark">
-              samkoma
-            </Link>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <Logo />
+          <div className="nav-right">
+            <div className="nav-links">
+              <NavLink to="/api" className="navlink">
+                API
+              </NavLink>
+              <NavLink to="/about" className="navlink">
+                About
+              </NavLink>
+              <a
+                className="navlink"
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noreferrer"
+              >
+                GitHub <span aria-hidden="true">↗</span>
+              </a>
+            </div>
             <button
               type="button"
               className="theme-toggle"
@@ -42,15 +57,28 @@ export function Shell({ children, showNewPoll = true }: ShellProps) {
       </main>
 
       <footer className="footer">
-        <div className="shell">
-          samkoma · group scheduling with one shared link ·{" "}
-          <a
-            href="https://github.com/drmowinckels/samkoma"
-            target="_blank"
-            rel="noreferrer"
-          >
-            GitHub
-          </a>
+        <div className="shell footer-inner">
+          <div className="footer-brand">
+            <span className="footer-mark">
+              <Mark size={20} />
+            </span>
+            <span>
+              <strong>samkoma</strong> — find a time, together.
+            </span>
+          </div>
+          <nav className="footer-links" aria-label="Footer">
+            <Link to="/about">About</Link>
+            <Link to="/api">API</Link>
+            <a href={apiDocsUrl()} target="_blank" rel="noreferrer">
+              Docs ↗
+            </a>
+            <a href={GITHUB_URL} target="_blank" rel="noreferrer">
+              GitHub ↗
+            </a>
+            <a href={SUPPORT_URL} target="_blank" rel="noreferrer">
+              Buy me a coffee ↗
+            </a>
+          </nav>
         </div>
       </footer>
     </div>

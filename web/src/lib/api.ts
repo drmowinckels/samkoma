@@ -95,6 +95,13 @@ export function icsUrl(id: string): string {
   return `${API_BASE}/v1/polls/${encodeURIComponent(id)}/ics`;
 }
 
+// The Worker serves an interactive Scalar reference (with a "try it" runner) at
+// /docs, off the same base the app calls. The web app renders its own static
+// reference from a bundled spec; this link is the live, executable console.
+export function apiDocsUrl(): string {
+  return `${API_BASE}/docs`;
+}
+
 export async function createPoll(input: PollInput): Promise<CreatedPoll> {
   const res = await fetch(`${API_BASE}/v1/polls`, {
     method: "POST",
