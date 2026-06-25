@@ -196,13 +196,16 @@ The repo deploys on push to `main` via [`.github/workflows/deploy.yml`].
 
 > The frontend is served at the root of the apex custom domain `samkoma.org`
 > (Vite `base` is `/`; `web/public/CNAME` carries the domain into the Pages
-> build). The API has a Cloudflare Worker custom domain `api.samkoma.org`
-> (declared as a `custom_domain` route in `api/wrangler.toml`, so `wrangler
-> deploy` provisions it). `ALLOWED_ORIGINS` / `WEB_BASE_URL` in
-> `api/wrangler.toml` and the `VITE_API_BASE` repo variable all point at these.
+> build). The API has a Cloudflare Worker custom domain `api.samkoma.org`.
+> `ALLOWED_ORIGINS` / `WEB_BASE_URL` in `api/wrangler.toml` and the
+> `VITE_API_BASE` repo variable all point at these.
 >
-> DNS lives in a Cloudflare zone for `samkoma.org`: the apex points at GitHub
-> Pages (A/AAAA records, DNS-only) and `api` is the Worker custom domain.
+> DNS lives in a Cloudflare zone for `samkoma.org`: the apex is a DNS-only
+> CNAME to `drmowinckels.github.io` (flattened to GitHub Pages' IPs), and
+> `api.samkoma.org` is a Worker custom domain. Both the custom domain and the
+> apex record are managed **out-of-band** (Cloudflare dashboard/API), because
+> the CI deploy token only has Workers + D1 permissions — `wrangler deploy`
+> just ships the script, vars and migrations.
 
 ## Notes
 
