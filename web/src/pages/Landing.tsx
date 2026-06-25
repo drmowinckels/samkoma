@@ -56,14 +56,9 @@ export function Landing() {
             <Link to="/new" className="btn btn-primary">
               Create a poll →
             </Link>
-            <a
-              href="https://github.com/drmowinckels/samkoma#readme"
-              className="btn btn-outline"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Browse the API
-            </a>
+            <Link to="/api" className="btn btn-outline">
+              Explore the API
+            </Link>
           </div>
           <div className="term" style={{ marginTop: 26, maxWidth: 460 }}>
             <span className="prompt">$</span> samkoma new{" "}

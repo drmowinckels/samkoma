@@ -14,9 +14,11 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,css}\"",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present"
+    "build": "npm run build --workspaces --if-present",
+    "gen:openapi": "tsx scripts/gen-openapi.ts"
   },
   "devDependencies": {
-    "prettier": "3.4.2"
+    "prettier": "3.4.2",
+    "tsx": "^4.22.4"
   }
 }
