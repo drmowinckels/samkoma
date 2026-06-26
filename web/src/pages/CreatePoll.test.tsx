@@ -112,6 +112,23 @@ describe("CreatePoll", () => {
     expect(createPoll.mock.calls[0][0].resultsHidden).toBe(true);
   });
 
+  it("sends a per-slot capacity when one is entered", async () => {
+    createPoll.mockResolvedValue({ id: "c1", url: "x", editToken: "t" });
+    const user = userEvent.setup();
+    renderForm();
+
+    await user.type(screen.getByLabelText("Event name"), "Standup");
+    const day = [
+      ...document.querySelectorAll<HTMLButtonElement>("[data-iso]"),
+    ].find((c) => !c.disabled && c.getAttribute("aria-pressed") === "false")!;
+    await user.click(day);
+    await user.type(screen.getByLabelText(/per-slot capacity/i), "8");
+    await user.click(screen.getByRole("button", { name: /create poll/i }));
+
+    await waitFor(() => expect(createPoll).toHaveBeenCalledTimes(1));
+    expect(createPoll.mock.calls[0][0].capacity).toBe(8);
+  });
+
   it("creates a weekday poll when the 'Days of the week' type is chosen", async () => {
     createPoll.mockResolvedValue({ id: "wk", url: "x", editToken: "t" });
     const user = userEvent.setup();
