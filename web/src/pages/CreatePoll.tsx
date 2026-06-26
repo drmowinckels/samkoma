@@ -41,6 +41,7 @@ export function CreatePoll() {
     template?.resultsHidden ?? false,
   );
   const [deadline, setDeadline] = useState("");
+  const [capacity, setCapacity] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -75,6 +76,7 @@ export function CreatePoll() {
         public: isPublic,
         resultsHidden,
         ...(deadline ? { deadline: new Date(deadline).toISOString() } : {}),
+        ...(Number(capacity) > 0 ? { capacity: Number(capacity) } : {}),
       });
       saveEditToken(created.id, created.editToken);
       navigate(`/e/${created.id}`);
@@ -302,6 +304,25 @@ export function CreatePoll() {
             <p className="subtle" style={{ margin: "6px 0 0", fontSize: 12 }}>
               After this, the poll stops accepting availability. You can also
               close it by hand any time.
+            </p>
+          </div>
+
+          <div className="field">
+            <label className="fieldlbl" htmlFor="capacity">
+              Per-slot capacity <span className="subtle">(optional)</span>
+            </label>
+            <input
+              id="capacity"
+              type="number"
+              min={1}
+              className="input"
+              placeholder="e.g. 8"
+              value={capacity}
+              onChange={(e) => setCapacity(e.target.value)}
+            />
+            <p className="subtle" style={{ margin: "6px 0 0", fontSize: 12 }}>
+              A slot is shown as "full" once this many people are free in it.
+              Leave blank for no limit.
             </p>
           </div>
 

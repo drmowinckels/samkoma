@@ -21,6 +21,7 @@ function makePoll(responses: PollResponse[]): Poll {
     closed: false,
     lockedSlot: null,
     expiresAt: null,
+    capacity: null,
     createdAt: "2026-07-01T00:00:00Z",
     responses,
   };
@@ -208,6 +209,51 @@ describe("GroupHeatmap — groups", () => {
     ];
     render(<GroupHeatmap poll={makePoll(responses)} viewerTz="UTC" />);
     expect(screen.queryByText(/by group/i)).not.toBeInTheDocument();
+  });
+});
+
+describe("GroupHeatmap — capacity", () => {
+  const responses: PollResponse[] = [
+    {
+      name: "Ada",
+      tz: "UTC",
+      slots: ["2026-07-15T09:00"],
+      maybe: [],
+      updatedAt: "",
+    },
+    {
+      name: "Kari",
+      tz: "UTC",
+      slots: ["2026-07-15T09:00"],
+      maybe: [],
+      updatedAt: "",
+    },
+  ];
+
+  it("marks a slot full once it reaches the capacity, with a legend key", () => {
+    render(
+      <GroupHeatmap
+        poll={{ ...makePoll(responses), capacity: 2 }}
+        viewerTz="UTC"
+      />,
+    );
+    // the 09:00 slot has 2 available and capacity is 2 → full
+    const table = screen.getByRole("table");
+    expect(
+      within(table).getByRole("rowheader", { name: /Wed 15, 09:00/ }),
+    ).toBeInTheDocument();
+    expect(table).toHaveTextContent(/2 of 2 \(full\)/);
+    expect(screen.getByText("full")).toBeInTheDocument();
+  });
+
+  it("shows no full marker when under capacity", () => {
+    render(
+      <GroupHeatmap
+        poll={{ ...makePoll(responses), capacity: 5 }}
+        viewerTz="UTC"
+      />,
+    );
+    expect(screen.getByRole("table")).not.toHaveTextContent(/\(full\)/);
   });
 });
 

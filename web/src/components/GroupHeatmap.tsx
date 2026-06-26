@@ -11,6 +11,8 @@ const BEST_SHADOW =
   "0 0 0 2px var(--brand), 0 0 14px color-mix(in oklab, var(--brand) 60%, transparent)";
 const LOCK_SHADOW = "0 0 0 2px var(--border-strong)";
 const SELECT_SHADOW = "0 0 0 2px var(--fg)";
+// A slot that has reached the poll's per-slot capacity — ringed in green.
+const FULL_RING = "0 0 0 3px var(--botanical)";
 const HATCH =
   "repeating-linear-gradient(45deg, color-mix(in oklab, var(--brand) 24%, transparent) 0 4px, transparent 4px 8px)";
 
@@ -233,6 +235,9 @@ export function GroupHeatmap({
               <th scope="row">{label(key)}</th>
               <td>
                 {count} of {agg.total}
+                {poll.capacity != null && count >= poll.capacity
+                  ? " (full)"
+                  : ""}
               </td>
               <td>{maybeN}</td>
             </tr>
@@ -302,25 +307,33 @@ export function GroupHeatmap({
                 const isLocked = key === poll.lockedSlot;
                 const isSelected = isHost && key === (selected ?? agg.bestKey);
                 const empty = count === 0 && maybeN === 0;
+                const isFull = poll.capacity != null && count >= poll.capacity;
                 const base =
                   count > 0
                     ? `color-mix(in oklab, var(--brand) min(${pct}%, var(--heat-cap)), var(--heat-base))`
                     : "transparent";
-                const desc = empty
-                  ? `${label(key)} — nobody yet`
-                  : `${label(key)} — ${count} of ${agg.total} available${maybeN ? `, ${maybeN} maybe` : ""}`;
+                const desc =
+                  (empty
+                    ? `${label(key)} — nobody yet`
+                    : `${label(key)} — ${count} of ${agg.total} available${maybeN ? `, ${maybeN} maybe` : ""}`) +
+                  (isFull ? " — full" : "");
+                const baseShadow = isLocked
+                  ? LOCK_SHADOW
+                  : isSelected
+                    ? SELECT_SHADOW
+                    : empty
+                      ? "inset 0 0 0 1px var(--border-subtle)"
+                      : isBest
+                        ? BEST_SHADOW
+                        : "none";
                 const cellStyle = {
                   cursor: isHost ? "pointer" : "default",
                   background: maybeN > 0 ? `${HATCH}, ${base}` : base,
-                  boxShadow: isLocked
-                    ? LOCK_SHADOW
-                    : isSelected
-                      ? SELECT_SHADOW
-                      : empty
-                        ? "inset 0 0 0 1px var(--border-subtle)"
-                        : isBest
-                          ? BEST_SHADOW
-                          : "none",
+                  boxShadow: isFull
+                    ? baseShadow === "none"
+                      ? FULL_RING
+                      : `${baseShadow}, ${FULL_RING}`
+                    : baseShadow,
                   color: "var(--fg)",
                 } as const;
                 const content = count > 0 ? count : maybeN > 0 ? maybeN : "";
@@ -392,6 +405,25 @@ export function GroupHeatmap({
               />
               maybe
             </span>
+            {poll.capacity != null && (
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                <span
+                  style={{
+                    width: 14,
+                    height: 14,
+                    borderRadius: 4,
+                    boxShadow: "inset 0 0 0 2px var(--botanical)",
+                  }}
+                />
+                full
+              </span>
+            )}
           </div>
         </div>
 
