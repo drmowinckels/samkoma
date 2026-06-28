@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { DISPLAY_LOCALE } from "../lib/datetime";
+import { useT } from "../i18n";
 
 // A localized calendar-month date picker with drag-to-paint selection. Replaces
 // the native <input type="date"> (whose format we can't control) and a flat day
@@ -68,6 +69,7 @@ export function MonthCalendar({
   lockedDays,
   today: nowProp,
 }: MonthCalendarProps) {
+  const t = useT();
   const today = useMemo(() => isoOf(nowProp ?? new Date()), [nowProp]);
   const floor = minDate ?? today;
   const currentMonth = useMemo(() => {
@@ -188,7 +190,7 @@ export function MonthCalendar({
           className="btn btn-outline btn-sm"
           onClick={() => shiftMonth(-1)}
           disabled={!canGoPrev}
-          aria-label="Previous month"
+          aria-label={t("calendar.prevMonth")}
         >
           ‹
         </button>
@@ -199,7 +201,7 @@ export function MonthCalendar({
           type="button"
           className="btn btn-outline btn-sm"
           onClick={() => shiftMonth(1)}
-          aria-label="Next month"
+          aria-label={t("calendar.nextMonth")}
         >
           ›
         </button>
@@ -225,9 +227,9 @@ export function MonthCalendar({
 
       <div
         role="group"
-        aria-label={`Choose dates in ${MONTH_TITLE_FMT.format(
-          new Date(view.year, view.month, 1),
-        )}`}
+        aria-label={t("calendar.chooseDatesIn", {
+          month: MONTH_TITLE_FMT.format(new Date(view.year, view.month, 1)),
+        })}
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(7, 1fr)",
@@ -249,9 +251,7 @@ export function MonthCalendar({
               aria-hidden={!inMonth}
               aria-label={FULL_DATE_FMT.format(date)}
               disabled={isDisabled && !isLocked}
-              title={
-                isLocked ? "Already in the poll — can't be removed" : undefined
-              }
+              title={isLocked ? t("calendar.lockedDay") : undefined}
               onPointerDown={(e) => start(iso, e)}
               onKeyDown={(e) => {
                 if (e.key === " " || e.key === "Enter") {
