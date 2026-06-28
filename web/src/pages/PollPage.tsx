@@ -19,6 +19,7 @@ import {
   tzOffsetLabel,
   browserTimezone,
   listTimezones,
+  localizedDateFormat,
 } from "../lib/datetime";
 import { formatSlotLabelInTz } from "../lib/tz";
 import { parseHostToken, buildHostLink } from "../lib/hostlink";
@@ -329,7 +330,7 @@ export function PollPage() {
                     ? t("poll.responding.closed")
                     : poll.deadline
                       ? t("poll.responding.closesAt", {
-                          date: new Intl.DateTimeFormat(undefined, {
+                          date: localizedDateFormat({
                             dateStyle: "medium",
                             timeStyle: "short",
                           }).format(new Date(poll.deadline)),
@@ -519,7 +520,7 @@ export function PollPage() {
                   <>
                     {" "}
                     {t("poll.share.activeUntil", {
-                      date: new Intl.DateTimeFormat(undefined, {
+                      date: localizedDateFormat({
                         month: "short",
                         day: "numeric",
                         year: "numeric",

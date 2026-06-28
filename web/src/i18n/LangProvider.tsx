@@ -4,6 +4,7 @@ import { DEFAULT_LOCALE, LOCALE_ALIASES, isLocale } from "./registry";
 import type { Locale } from "./registry";
 import { makeT } from "./translate";
 import type { TFunc } from "./translate";
+import { setDisplayLocale } from "../lib/datetime";
 
 const LANG_KEY = "samkoma-lang";
 
@@ -34,6 +35,11 @@ function detectLocale(): Locale {
 
 export function LangProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<Locale>(detectLocale);
+
+  // Keep date/time formatting in sync with the UI language. Set during render
+  // (LangProvider renders before its children) so date labels and the chosen
+  // language never disagree, even on the first paint after a switch.
+  setDisplayLocale(locale);
 
   useEffect(() => {
     document.documentElement.lang = locale;
