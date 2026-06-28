@@ -177,6 +177,27 @@ a {
   color: var(--brand);
 }
 
+.lang-toggle {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--fg-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: border-color 0.15s var(--ease-out);
+}
+.lang-toggle:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
 /* ---------- type ---------- */
 .eyebrow {
   font-size: 14px;
